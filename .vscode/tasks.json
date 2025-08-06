@@ -1,0 +1,46 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "CMake: clean",
+			"command": "clean",
+			"problemMatcher": [],
+			"detail": "CMake template clean task"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build",
+			"command": "build",
+			"targets": [
+				"all"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake template build task"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build tests",
+			"command": "build",
+			"targets": [
+				"cengine_tests"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "Build the test executable"
+		},
+		{
+			"label": "Run tests",
+			"type": "shell",
+			"command": "cd ${workspaceFolder}/build && ctest -C Debug --output-on-failure",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"dependsOn": ["CMake: build tests"],
+			"problemMatcher": [],
+			"detail": "Run all tests"
+		}
+	]
+}

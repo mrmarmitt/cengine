@@ -1,0 +1,10 @@
+^C:\USERS\MRMAR\DOCUMENTS\PROJETOS_DE_ESTUDO\C++\CENGINE\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/mrmar/Documents/projetos_de_estudo/c++/cengine -BC:/Users/mrmar/Documents/projetos_de_estudo/c++/cengine/build --check-stamp-file C:/Users/mrmar/Documents/projetos_de_estudo/c++/cengine/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

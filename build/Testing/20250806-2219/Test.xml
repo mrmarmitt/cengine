@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20250806-2219-Experimental"
+	Name="(empty)"
+	Generator="ctest-4.0.2"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Windows"
+	Hostname="PC-Marmitt"
+	OSRelease=" Professional"
+	OSVersion=" (Build 26100)"
+	OSPlatform="AMD64"
+	Is64Bits="1"
+	VendorString="AuthenticAMD"
+	VendorID="Advanced Micro Devices"
+	FamilyID="15"
+	ModelID="1"
+	ModelName="AMD Ryzen 7 7700X 8-Core Processor             "
+	ProcessorCacheSize="64"
+	NumberOfLogicalCPU="16"
+	NumberOfPhysicalCPU="8"
+	TotalVirtualMemory="34010"
+	TotalPhysicalMemory="31962"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="4491"
+	>
+	<Testing>
+		<StartDateTime>Aug 06 19:19 Hora oficial do Brasil</StartDateTime>
+		<StartTestTime>1754518781</StartTestTime>
+		<TestList/>
+		<EndDateTime>Aug 06 19:19 Hora oficial do Brasil</EndDateTime>
+		<EndTestTime>1754518781</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
