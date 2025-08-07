@@ -31,10 +31,10 @@
 *.out
 *.app
 *out 
+*build
 
 # VsCode
 *.vs
-
 
 # CLion
 *.idea
