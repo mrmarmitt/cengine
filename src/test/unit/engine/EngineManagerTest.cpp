@@ -1,12 +1,11 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include <test/mock/MockWindowManager.hpp>
-#include <test/mock/MockGameManager.hpp>
+#include <test/unit/mock/MockWindowManager.hpp>
+#include <test/unit/mock/MockGameManager.hpp>
+#include <test/unit/mock/MockRouter.hpp>
 
 #include <engine/EngineManager.hpp>
-#include <test/mock/MockRouter.hpp>
-
 
 // Fixture para os testes de EngineManager
 class EngineManagerTest : public ::testing::Test {

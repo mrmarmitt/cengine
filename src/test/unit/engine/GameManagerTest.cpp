@@ -6,8 +6,8 @@
 
 #include <engine/IScene.hpp>
 
-#include <test/mock/MockScene.hpp>
-#include <test/mock/MockRouter.hpp>
+#include <test/unit/mock/MockScene.hpp>
+#include <test/unit/mock/MockRouter.hpp>
 
 #include <main/engine/GameManager.hpp>
 

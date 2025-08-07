@@ -3,15 +3,15 @@
 #include <memory>
 #include <string>
 
-// Inclua os arquivos de cabeçalho da sua implementação
-#include "../src/main/engine/service/impl/RouterInMemory.hpp"
-// #include "../src/main/engine/service/repository/ISceneRepository.hpp"
 #include <engine/IState.hpp>
 #include <engine/IScene.hpp>
 
-#include <test/mock/MockScene.hpp>
-#include <test/mock/MockState.hpp>
-#include <test/mock/MockSceneRepository.hpp>
+#include <test/unit/mock/MockScene.hpp>
+#include <test/unit/mock/MockState.hpp>
+#include <test/unit/mock/MockSceneRepository.hpp>
+
+// Inclua os arquivos de cabeçalho da sua implementação
+#include "../src/main/engine/service/impl/RouterInMemory.hpp"
 
 // Fixture para a classe RouterServiceTest
 class RouterInMemoryTest : public ::testing::Test {

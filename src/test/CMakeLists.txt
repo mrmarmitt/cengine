@@ -16,20 +16,22 @@ FetchContent_MakeAvailable(googletest)
 # -------------------------------------------------------------
 # file(GLOB_RECURSE TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-set(TEST_SOURCES
+set(UNIT_TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/engine/service/repository/SceneRepositoryTest.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/engine/service/impl/RouterInMemoryTest.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/engine/GameManagerTest.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/engine/EngineManagerTest.cpp"
-    
-    # Adicione aqui qualquer outro arquivo de teste que você criar no futuro.
+    "${CMAKE_CURRENT_SOURCE_DIR}/unit/engine/service/repository/SceneRepositoryTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/unit/engine/service/impl/RouterInMemoryTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/unit/engine/GameManagerTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/unit/engine/EngineManagerTest.cpp"
+)
+
+set(INTEGRATION_TEST_SOURCE
+  "${CMAKE_CURRENT_SOURCE_DIR}/integration/EngineManagerIntegrationTest.cpp"
 )
 
 # -------------------------------------------------------------
 # 3. Criar o executável de testes
 # -------------------------------------------------------------
-add_executable(cengine_tests ${TEST_SOURCES})
+add_executable(cengine_tests ${UNIT_TEST_SOURCES} ${INTEGRATION_TEST_SOURCE})
 
 # -------------------------------------------------------------
 # 4. Vincular as bibliotecas e diretórios de include

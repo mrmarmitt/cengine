@@ -4,8 +4,8 @@
 #include <engine/IState.hpp>
 #include <engine/IScene.hpp>
 
-#include <test/mock/MockState.hpp>
-#include <test/mock/MockScene.hpp>
+#include <test/unit/mock/MockState.hpp>
+#include <test/unit/mock/MockScene.hpp>
 
 #include "../src/main/engine/service/repository/SceneRepository.hpp"
 
