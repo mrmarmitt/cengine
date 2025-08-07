@@ -1,12 +1,16 @@
-# Testes Unitários do CEngine
+# Testes do CEngine
 
-Este diretório contém os testes unitários para o CEngine, utilizando o framework Google Test (gtest) e Google Mock (gmock).
+Este diretório contém os testes para o CEngine, utilizando o framework Google Test (gtest) e Google Mock (gmock).
 
 ## Estrutura
 
 - `main.cpp`: Ponto de entrada para os testes
-- `engine/`: Testes para os componentes do motor
-  - `RouterServiceTest.cpp`: Testes para a classe RouterService
+- `unit/`: Contém os testes unitários
+  - `engine/`: Testes unitários para os componentes do motor
+    - `RouterInMemoryTest.cpp`: Exemplo de teste para a classe RouterInMemory
+  - `mock/`: Contém as implementações de mocks para os testes unitários
+- `integration/`: Contém os testes de integração
+  - `EngineManagerIntegrationTest.cpp`: Exemplo de teste de integração para o EngineManager
 
 ## Requisitos
 
@@ -52,13 +56,7 @@ cmake --build . --config Debug
 2. Execute os testes:
 
 ```powershell
-ctest -C Debug
-```
-
-Ou execute diretamente o binário de testes:
-
-```powershell
-.\Debug\cengine_tests.exe
+.\src\test\Debug\cengine_tests.exe
 ```
 
 Durante a primeira compilação, o CMake irá automaticamente baixar e compilar o Google Test se ele não for encontrado no seu sistema. Isso pode levar alguns minutos.
