@@ -34,7 +34,7 @@
 
 # VsCode
 *.vs
-*build
+
 
 # CLion
 *.idea

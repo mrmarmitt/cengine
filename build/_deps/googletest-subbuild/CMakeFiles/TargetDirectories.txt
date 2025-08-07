@@ -1,3 +1,0 @@
-C:/Users/mrmar/Documents/projetos_de_estudo/c++/cengine/build/_deps/googletest-subbuild/CMakeFiles/googletest-populate.dir
-C:/Users/mrmar/Documents/projetos_de_estudo/c++/cengine/build/_deps/googletest-subbuild/CMakeFiles/ALL_BUILD.dir
-C:/Users/mrmar/Documents/projetos_de_estudo/c++/cengine/build/_deps/googletest-subbuild/CMakeFiles/ZERO_CHECK.dir
