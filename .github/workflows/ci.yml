@@ -12,19 +12,36 @@ on:
       - 'release/**'
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-22.04 # Versão LTS mais recente com C++23
+  build-and-test-linux:
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout do Código
       uses: actions/checkout@v4
 
     - name: Configurar o Ambiente de Build com CMake
-      run: |
-        cmake -S . -B build
+      run: cmake -S . -B build
 
     - name: Buildar o Projeto
       run: cmake --build build
+
+    - name: Rodar os Testes
+      run: |
+        cd build
+        ctest --output-on-failure
+
+  build-and-test-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout do Código
+      uses: actions/checkout@v4
+
+    - name: Configurar o Ambiente de Build com CMake
+      run: cmake -S . -B build
+
+    - name: Buildar o Projeto
+      run: cmake --build build --config Release
 
     - name: Rodar os Testes
       run: |
