@@ -5,8 +5,11 @@ on:
     branches: 
       - main
       - 'release/**'
+      - 'feature/**'
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main
+      - 'release/**'
 
 jobs:
   build-and-test:
