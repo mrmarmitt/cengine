@@ -31,9 +31,12 @@
 *.out
 *.app
 *out 
+*build
 
 # VsCode
 *.vs
+*.vscode
+*.cache
 
 # CLion
 *.idea

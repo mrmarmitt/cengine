@@ -1,0 +1,35 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "msys2-mingw",
+            "displayName": "GCC 15.1.0 x86_64-w64-mingw32 (ucrt64)",
+            "description": "Compila com GCC do MSYS2 UCRT64",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "C:/msys64/ucrt64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/msys64/ucrt64/bin/g++.exe",
+                "CMAKE_MAKE_PROGRAM": "C:/msys64/ucrt64/bin/mingw32-make.exe"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "msys2-mingw",
+            "configurePreset": "msys2-mingw",
+            "description": "Build com GCC 15.1.0 UCRT64",
+            "jobs": 8
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "msys2-mingw",
+            "configurePreset": "msys2-mingw",
+            "output": {
+                "outputOnFailure": true
+            }
+        }
+    ]
+}
