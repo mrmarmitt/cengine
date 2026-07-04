@@ -1,6 +1,6 @@
 # 03 — Introduzir namespaces por camada
 
-- **Status:** absorvida pela [05a](05a-restructure-modules.md)
+- **Status:** done ✅ (executada dentro da [05a](05a-restructure-modules.md), 2026-07-04)
 - **Prioridade:** 🟡 Média
 - **Categoria:** Arquitetura / distribuição
 - **Depende de:** 01

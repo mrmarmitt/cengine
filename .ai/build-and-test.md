@@ -46,8 +46,14 @@ ctest --output-on-failure
 Alternativa (rodar o binário direto):
 
 ```powershell
-out/build/msys2-mingw/src/test/cengine_tests.exe
+out/build/msys2-mingw/tests/cengine_tests.exe
 ```
+
+> **Estrutura (pós-tarefa 05a):** o projeto é multi-target —
+> `cengine::core` (`core/`) + `cengine::routing` (`modules/routing/`) + testes
+> (`tests/`, organizados por camada). Módulos são opt-in via
+> `-DCENGINE_BUILD_ROUTING=ON/OFF` e `-DCENGINE_BUILD_TESTS=ON/OFF`. O core
+> builda sozinho sem o routing.
 
 ## Saída obtida
 
