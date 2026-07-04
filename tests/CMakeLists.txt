@@ -14,39 +14,38 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # -------------------------------------------------------------
-# 2. Arquivos-fonte de teste, organizados por camada
+# 2. Executável de testes — sempre inclui a camada core
 # -------------------------------------------------------------
-set(CORE_TEST_SOURCES
+add_executable(cengine_tests
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/EngineManagerTest.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/integration/EngineManagerIntegrationTest.cpp"
 )
 
-set(ROUTING_TEST_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/routing/GameManagerTest.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/routing/RouterInMemoryTest.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/routing/SceneRepositoryTest.cpp"
-)
-
-# -------------------------------------------------------------
-# 3. Executável de testes
-# -------------------------------------------------------------
-add_executable(cengine_tests
-    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
-    ${CORE_TEST_SOURCES}
-    ${ROUTING_TEST_SOURCES}
-)
-
-# -------------------------------------------------------------
-# 4. Bibliotecas e includes
-# -------------------------------------------------------------
 target_link_libraries(cengine_tests
   PRIVATE
   cengine::core
-  cengine::routing
   gtest_main
   gmock_main
 )
 
+# -------------------------------------------------------------
+# 3. Testes do módulo routing — só quando o módulo está habilitado
+#    (evita linkar cengine::routing quando -DCENGINE_BUILD_ROUTING=OFF)
+# -------------------------------------------------------------
+if(CENGINE_BUILD_ROUTING)
+  target_sources(cengine_tests
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/routing/GameManagerTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/routing/RouterInMemoryTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/routing/SceneRepositoryTest.cpp"
+  )
+  target_link_libraries(cengine_tests PRIVATE cengine::routing)
+endif()
+
+# -------------------------------------------------------------
+# 4. Includes e propriedades
+# -------------------------------------------------------------
 # Permite incluir os mocks como <mock/MockXxx.hpp>
 target_include_directories(cengine_tests
   PRIVATE

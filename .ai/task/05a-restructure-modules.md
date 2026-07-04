@@ -72,8 +72,12 @@ cengine/
 - CMake: top-level agregador com `option(CENGINE_BUILD_ROUTING)` e
   `option(CENGINE_BUILD_TESTS)`; `target_compile_features(cengine_core PUBLIC
   cxx_std_23)`.
-- Verificação: build limpo, **`ctest` 30/30 verde**, e core buildando **sozinho**
-  com `-DCENGINE_BUILD_ROUTING=OFF` (opt-in comprovado).
+- Verificação: build limpo, **`ctest` 30/30 verde** (default), core buildando
+  **sozinho** com `-DCENGINE_BUILD_ROUTING=OFF` (opt-in comprovado), e a
+  combinação `ROUTING=OFF` + `TESTS=ON` rodando só os 5 testes de core.
+- Os testes de routing são **gated** por `CENGINE_BUILD_ROUTING` em
+  `tests/CMakeLists.txt` — senão a configuração com routing OFF falharia ao
+  linkar `cengine::routing` (achado no review do PR #4).
 - Absorveu a tarefa 03 (namespaces por camada).
 
 ## Riscos
