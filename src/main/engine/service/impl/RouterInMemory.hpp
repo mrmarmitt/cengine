@@ -15,19 +15,19 @@ public:
     explicit RouterInMemory(std::shared_ptr<ISceneRepository> sceneRepository);
     ~RouterInMemory() override = default;
 
-    void setNextState(std::unique_ptr<IState> state) const;
+    void setNextState(std::unique_ptr<IState> state) const override;
 
-    [[nodiscard]] IState& getCurrentStateGame() const;
-    [[nodiscard]] std::string getCurrentStateGameName() const;
-    [[nodiscard]] std::string getCurrentStateGameCode() const;
-    [[nodiscard]] IScene& getCurrentCachedScreen() const;
+    [[nodiscard]] IState& getCurrentStateGame() const override;
+    [[nodiscard]] std::string getCurrentStateGameName() const override;
+    [[nodiscard]] std::string getCurrentStateGameCode() const override;
+    [[nodiscard]] IScene& getCurrentCachedScreen() const override;
 
-    [[nodiscard]] IState& getNextStateGame() const;
-    [[nodiscard]] std::string getNextStateGameName() const;
-    [[nodiscard]] std::string getNextStateGameCode() const;
-    [[nodiscard]] IScene& getNextCachedScreen() const;
+    [[nodiscard]] IState& getNextStateGame() const override;
+    [[nodiscard]] std::string getNextStateGameName() const override;
+    [[nodiscard]] std::string getNextStateGameCode() const override;
+    [[nodiscard]] IScene& getNextCachedScreen() const override;
 
-    [[nodiscard]] bool hasNextScreen() const;
+    [[nodiscard]] bool hasNextScreen() const override;
 
-    void goToNextScreen() const;
+    void goToNextScreen() const override;
 };

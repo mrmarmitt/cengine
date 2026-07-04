@@ -14,5 +14,5 @@ public:
     void onExit() override;
 
     [[nodiscard]] bool shouldExist() const override;
-    void cleanup();
+    void cleanup() override;
 };
