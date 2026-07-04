@@ -6,6 +6,10 @@
 - **Depende de:** 01 (rede de segurança de `override` já ativa)
 - **Bloqueia:** 05 (o redesenho do Router fica mais claro com nomes corretos)
 
+> Nota 2026-07-04: a parte 2.2 (`isNextStateEqualsToCurrentScene` ->
+> `hasPendingStateChange`) foi executada dentro da tarefa 05b. Esta tarefa ainda
+> precisa resolver `shouldExist()` -> `shouldExit()`.
+
 ## Problema
 
 Dois nomes dizem o **oposto** do que o código faz — a maior fonte de confusão

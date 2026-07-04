@@ -53,7 +53,7 @@ void SceneRepository::unloadAll() {
     m_scenes.clear();
 }
 
-bool SceneRepository::isNextStateEqualsToCurrentScene() const {
+bool SceneRepository::hasPendingStateChange() const {
     return m_nextState->getCode() != m_currentState->getCode();
 }
 

@@ -179,8 +179,8 @@ TEST_F(SceneRepositoryTest, PersistNextStateMovesNewState) {
 }
 
 
-// Teste: isNextStateEqualsToCurrentScene deve retornar true se os códigos de estado forem diferentes.
-TEST_F(SceneRepositoryTest, IsNextStateEqualsToCurrentSceneReturnsTrueIfCodesDifferent) {
+// Teste: hasPendingStateChange deve retornar true se os códigos de estado forem diferentes.
+TEST_F(SceneRepositoryTest, HasPendingStateChangeReturnsTrueIfCodesDifferent) {
     auto nextStateMock = std::make_unique<MockState>();
 
     // Define o comportamento de getCode() para os estados
@@ -192,11 +192,11 @@ TEST_F(SceneRepositoryTest, IsNextStateEqualsToCurrentSceneReturnsTrueIfCodesDif
     sceneRepository->persistNextState(std::move(nextStateMock));
 
     // A função deve retornar true porque os códigos são diferentes
-    EXPECT_TRUE(sceneRepository->isNextStateEqualsToCurrentScene());
+    EXPECT_TRUE(sceneRepository->hasPendingStateChange());
 }
 
-// Teste: isNextStateEqualsToCurrentScene deve retornar false se os códigos de estado forem iguais.
-TEST_F(SceneRepositoryTest, IsNextStateEqualsToCurrentSceneReturnsFalseIfCodesSame) {
+// Teste: hasPendingStateChange deve retornar false se os códigos de estado forem iguais.
+TEST_F(SceneRepositoryTest, HasPendingStateChangeReturnsFalseIfCodesSame) {
     auto nextStateMock = std::make_unique<MockState>();
 
     // Define o comportamento de getCode() para os estados
@@ -208,5 +208,5 @@ TEST_F(SceneRepositoryTest, IsNextStateEqualsToCurrentSceneReturnsFalseIfCodesSa
     sceneRepository->persistNextState(std::move(nextStateMock));
 
     // A função deve retornar false porque os códigos são os mesmos
-    EXPECT_FALSE(sceneRepository->isNextStateEqualsToCurrentScene());
+    EXPECT_FALSE(sceneRepository->hasPendingStateChange());
 }

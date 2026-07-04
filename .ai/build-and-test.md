@@ -6,7 +6,7 @@ com segurança (rodar `ctest` a cada tarefa).
 
 - **Data da verificação:** 2026-07-04
 - **Plataforma:** Windows 11 Pro
-- **Resultado:** ✅ **30/30 testes passaram** (build limpo, sem warnings)
+- **Resultado:** ✅ **28/28 testes passaram** (build limpo, sem warnings)
 
 ## Toolchain confirmada
 
@@ -62,15 +62,15 @@ out/build/msys2-mingw/tests/cengine_tests.exe
 -- Generating done (0.1s)
 [100%] Built target cengine_tests
 ...
-100% tests passed, 0 tests failed out of 30
+100% tests passed, 0 tests failed out of 28
 Total Test time (real) = 0.20 sec
 ```
 
-## Cobertura da suíte (30 testes)
+## Cobertura da suíte (28 testes)
 
 - `SceneRepositoryTest` — registro/instanciação lazy via factory, unload,
   clone de estado, comparação de estados.
-- `RouterInMemoryTest` — delegação do Router para o repositório.
+- `RouterInMemoryTest` — API enxuta do Router e delegação para o repositório.
 - `GameManagerTest` — ciclo `onEnter/render/input/onExit` e condição de saída.
 - `EngineManagerTest` + `EngineManagerIntegrationTest` — loop principal validado
   por **call-log** (ordem exata das chamadas).
@@ -81,7 +81,7 @@ Total Test time (real) = 0.20 sec
    caminhos absolutos hardcoded (`C:/msys64/ucrt64/...`) que batem com esta
    máquina; numa máquina limpa falharia. → **[Tarefa 08](task/08-presets-and-ci.md)**.
 
-2. **Rede de segurança sólida.** Os 30 testes (incl. integração por call-log)
+2. **Rede de segurança sólida.** Os 28 testes (incl. integração por call-log)
    dão confiança para a cirurgia do `IRouter`. → **[Tarefa 05](task/05-redesign-irouter.md)**.
 
 3. **Os nomes dos próprios testes carregam os bugs de nomenclatura:**

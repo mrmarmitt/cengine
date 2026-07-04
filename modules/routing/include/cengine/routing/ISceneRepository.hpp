@@ -20,7 +20,7 @@ public:
     virtual core::IScene& getScene(const std::string& name) = 0;
     virtual void unloadScene(const std::string& name) = 0;
     virtual void unloadAll() = 0;
-    virtual bool isNextStateEqualsToCurrentScene() const = 0;
+    virtual bool hasPendingStateChange() const = 0;
 };
 
 } // namespace cengine::routing

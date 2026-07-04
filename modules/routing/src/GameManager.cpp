@@ -5,6 +5,7 @@
 #include <iostream>
 #include <utility>
 
+#include <cengine/routing/IState.hpp>
 #include <cengine/routing/IRouter.hpp>
 
 namespace cengine::routing {
@@ -12,34 +13,34 @@ namespace cengine::routing {
 GameManager::GameManager(std::shared_ptr<IRouter> routerService) : m_routerService(std::move(routerService)){}
 
 void GameManager::onEnter() {
-    if (core::IScene& screen = m_routerService->getCurrentCachedScreen(); !screen.isOnEnterExecuted()) {
-        screen.onEnter();
-        screen.onEnterExecuted();
+    if (core::IScene& scene = m_routerService->currentScene(); !scene.isOnEnterExecuted()) {
+        scene.onEnter();
+        scene.onEnterExecuted();
     }
 }
 
 void GameManager::render() {
-    core::IScene& screen = m_routerService->getCurrentCachedScreen();
+    core::IScene& scene = m_routerService->currentScene();
 
-    screen.draw();
+    scene.draw();
 }
 
 void GameManager::input() {
-    core::IScene& screen = m_routerService->getCurrentCachedScreen();
+    core::IScene& scene = m_routerService->currentScene();
 
-    screen.input();
+    scene.input();
 }
 
 void GameManager::onExit() {
-    if (m_routerService->hasNextScreen()) {
-        core::IScene& screen = m_routerService->getCurrentCachedScreen();
-        screen.onExit();
-        m_routerService->goToNextScreen();
+    if (m_routerService->hasPendingStateChange()) {
+        core::IScene& scene = m_routerService->currentScene();
+        scene.onExit();
+        m_routerService->commitStateChange();
     }
 }
 
 bool GameManager::shouldExist() const {
-    return m_routerService->getCurrentStateGameCode() == "exit";
+    return m_routerService->currentState().getCode() == "exit";
 }
 
 void GameManager::cleanup() {

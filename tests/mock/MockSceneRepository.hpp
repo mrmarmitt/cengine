@@ -15,5 +15,5 @@ public:
     MOCK_METHOD(cengine::core::IScene&, getScene, (const std::string& name), (override));
     MOCK_METHOD(void, unloadScene, (const std::string& name), (override));
     MOCK_METHOD(void, unloadAll, (), (override));
-    MOCK_METHOD(bool, isNextStateEqualsToCurrentScene, (), (const, override));
+    MOCK_METHOD(bool, hasPendingStateChange, (), (const, override));
 };

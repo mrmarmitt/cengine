@@ -38,7 +38,7 @@ public:
 
     void unloadAll() override;
 
-    bool isNextStateEqualsToCurrentScene() const override;
+    bool hasPendingStateChange() const override;
 };
 
 } // namespace cengine::routing
