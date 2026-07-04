@@ -58,7 +58,7 @@ public:
         callLog.push_back("onExit");
     }
 
-    bool shouldExist() const override {
+    bool shouldExit() const override {
         // Retorna true para sair do loop após o número de iterações desejado.
         return runCount >= maxRuns;
     }

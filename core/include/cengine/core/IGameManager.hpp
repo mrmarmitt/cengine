@@ -12,7 +12,7 @@ public:
     virtual void onExit() = 0;
     virtual void cleanup() = 0;
 
-    [[nodiscard]] virtual bool shouldExist() const = 0;
+    [[nodiscard]] virtual bool shouldExit() const = 0;
 };
 
 } // namespace cengine::core

@@ -53,8 +53,8 @@ TEST_F(EngineManagerTest, Start_InitializesWindowAndRunsLoop) {
     EXPECT_CALL(*m_capturedGameManager, render()).Times(1);
     EXPECT_CALL(*m_capturedGameManager, onExit()).Times(1);
 
-    // 3. shouldExist() é chamado para verificar se o loop deve continuar.
-    EXPECT_CALL(*m_capturedGameManager, shouldExist()).WillOnce(testing::Return(true));
+    // 3. shouldExit() é chamado para verificar se o loop deve continuar.
+    EXPECT_CALL(*m_capturedGameManager, shouldExit()).WillOnce(testing::Return(true));
 
     // 4. O loop termina e o método cleanup() é chamado.
     EXPECT_CALL(*m_capturedGameManager, cleanup()).Times(1);
@@ -62,13 +62,6 @@ TEST_F(EngineManagerTest, Start_InitializesWindowAndRunsLoop) {
 
     // Chamar o método start() da classe que estamos testando
     m_engineManager->start();
-}
-
-// Teste para o método input()
-TEST_F(EngineManagerTest, Input_CallsGameManagerInput) {
-    EXPECT_CALL(*m_capturedGameManager, input()).Times(1);
-
-    m_engineManager->input();
 }
 
 // Teste para o método cleanup()

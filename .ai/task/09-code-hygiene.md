@@ -1,6 +1,13 @@
 # 09 — Higiene de código (includes, código morto, forward-declares)
 
-- **Status:** todo
+- **Status:** done ✅ (2026-07-04, branch `feature/cleanup-02-04-09-10`)
+
+> Executado: removido `EngineManager::input()` (morto — o loop chama
+> `gameManager->input()` direto) e o seu teste; removido `#include <iostream>`
+> órfão de `EngineManager.cpp`; removidas as linhas comentadas de `IScene.hpp`.
+> Os caminhos relativos `../../../` já haviam sido eliminados na 05a, e os
+> forward-declares redundantes do `IRouter` na 05b. Remover `input()` é breaking
+> na API pública do core (coordenar bump `0.1.0`).
 - **Prioridade:** 🟢 Baixa
 - **Categoria:** Boas práticas / limpeza
 - **Depende de:** 05 (fazer a limpeza depois da refatoração grande, para não

@@ -1,17 +1,18 @@
 # 04 — `const`-correctness + remover logging da biblioteca
 
-- **Status:** todo
+- **Status:** done ✅ (2026-07-04, branch `feature/cleanup-02-04-09-10`)
 - **Prioridade:** 🟡 Média
 - **Categoria:** Boas práticas
 - **Depende de:** 01, 02
-- **Bloqueia:** 05 (o Router será redesenhado; melhor entrar nele já com a
-  semântica de `const` correta)
 
-> Nota 2026-07-04: os mutadores antigos do `IRouter`
-> (`setNextState`, `goToNextScreen`) foram substituidos na tarefa 05b por
-> `requestState` e `commitStateChange`, ambos nao-`const`. Esta tarefa ainda
-> precisa remover o logging direto de `GameManager::cleanup()` e revisar qualquer
-> `const` remanescente fora da API do router.
+> Concluída em duas etapas:
+> - **`const`-correctness:** os mutadores antigos do `IRouter`
+>   (`setNextState`, `goToNextScreen`) foram substituídos na tarefa 05b por
+>   `requestState`/`commitStateChange`, ambos não-`const`. Sem `const` mentiroso
+>   remanescente (revisado `EngineManager`/`GameManager`).
+> - **Logging:** removido o `std::cout` de `GameManager::cleanup()` (e o
+>   `#include <iostream>` órfão). O hook `cleanup()` ficou vazio — abstração de
+>   log fica para o futuro, se necessário.
 
 ## Problema
 

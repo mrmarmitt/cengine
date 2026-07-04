@@ -21,7 +21,6 @@ public:
     ~EngineManager() = default;
 
     void start();
-    void input() const;
     void cleanup() const;
 };
 

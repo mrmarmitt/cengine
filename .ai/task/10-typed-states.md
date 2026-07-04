@@ -1,6 +1,12 @@
 # 10 — Eliminar magic string e estados *stringly-typed*
 
-- **Status:** todo
+- **Status:** done ✅ (opção 1, 2026-07-04, branch `feature/cleanup-02-04-09-10`)
+
+> Executada a **opção 1** (mínima): a string mágica `"exit"` virou a constante
+> nomeada `cengine::routing::kExitStateCode` (`std::string_view`) em
+> `StateCodes.hpp`, usada em `GameManager::shouldExit()` e nos testes. As opções
+> 2/3 (sinal de saída tipado / `enum` em vez de `std::string` no `IState`) ficam
+> como evolução futura, se houver dor real com strings.
 - **Prioridade:** 🟢 Baixa
 - **Categoria:** Boas práticas / design
 - **Depende de:** 02 (nomes já corrigidos), 05 (desenho do Router estável)

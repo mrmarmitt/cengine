@@ -1,7 +1,5 @@
 #include <cengine/core/EngineManager.hpp>
 
-#include <iostream>
-
 namespace cengine::core {
 
 EngineManager::EngineManager(std::unique_ptr<IWindowManager> windowManager,
@@ -17,12 +15,6 @@ void EngineManager::start() {
 
     m_isRunning = true;
     run();
-}
-
-void EngineManager::input() const {
-    if (m_gameManager) {
-        m_gameManager->input();
-    }
 }
 
 void EngineManager::cleanup() const {
@@ -44,7 +36,7 @@ void EngineManager::run() {
         m_gameManager->render();
         m_gameManager->onExit();
 
-        m_isRunning = !m_gameManager->shouldExist();
+        m_isRunning = !m_gameManager->shouldExit();
     }
     cleanup();
 }

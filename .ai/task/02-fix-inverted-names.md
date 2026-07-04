@@ -1,14 +1,16 @@
 # 02 — Corrigir nomes invertidos e semântica enganosa
 
-- **Status:** todo
+- **Status:** done ✅ (2026-07-04, branch `feature/cleanup-02-04-09-10`)
 - **Prioridade:** 🔴 Alta
 - **Categoria:** Boas práticas / legibilidade
 - **Depende de:** 01 (rede de segurança de `override` já ativa)
-- **Bloqueia:** 05 (o redesenho do Router fica mais claro com nomes corretos)
 
-> Nota 2026-07-04: a parte 2.2 (`isNextStateEqualsToCurrentScene` ->
-> `hasPendingStateChange`) foi executada dentro da tarefa 05b. Esta tarefa ainda
-> precisa resolver `shouldExist()` -> `shouldExit()`.
+> Concluída em duas etapas:
+> - **2.2** (`isNextStateEqualsToCurrentScene` → `hasPendingStateChange`) foi
+>   executada dentro da tarefa 05b.
+> - **2.1** (`shouldExist()` → `shouldExit()`) executada aqui: renomeado em
+>   `IGameManager`, `GameManager`, no call site do `EngineManager`, nos mocks/fakes
+>   e testes. É breaking na API pública do core (coordenar bump `0.1.0`).
 
 ## Problema
 

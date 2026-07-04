@@ -17,7 +17,7 @@ public:
     void input() override;
     void onExit() override;
 
-    [[nodiscard]] bool shouldExist() const override;
+    [[nodiscard]] bool shouldExit() const override;
     void cleanup() override;
 };
 

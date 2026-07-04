@@ -13,5 +13,5 @@ public:
     MOCK_METHOD(void, onExit, (), (override));
     MOCK_METHOD(void, cleanup, (), (override));
 
-    MOCK_METHOD(bool, shouldExist, (), (const, override));
+    MOCK_METHOD(bool, shouldExit, (), (const, override));
 };

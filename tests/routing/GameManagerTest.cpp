@@ -6,6 +6,7 @@
 
 #include <cengine/core/IScene.hpp>
 #include <cengine/routing/GameManager.hpp>
+#include <cengine/routing/StateCodes.hpp>
 
 #include <mock/MockRouter.hpp>
 #include <mock/MockScene.hpp>
@@ -77,16 +78,16 @@ TEST_F(GameManagerTest, OnExit_WhenPendingStateChangeDoesNotExist_DoesNothing) {
     m_gameManager->onExit();
 }
 
-TEST_F(GameManagerTest, ShouldExist_WhenStateIsExit_ReturnsTrue) {
+TEST_F(GameManagerTest, ShouldExit_WhenStateIsExit_ReturnsTrue) {
     EXPECT_CALL(*m_mockRouter, currentState()).WillOnce(testing::ReturnRef(m_mockState));
-    EXPECT_CALL(m_mockState, getCode()).WillOnce(testing::Return("exit"));
+    EXPECT_CALL(m_mockState, getCode()).WillOnce(testing::Return(std::string(kExitStateCode)));
 
-    ASSERT_TRUE(m_gameManager->shouldExist());
+    ASSERT_TRUE(m_gameManager->shouldExit());
 }
 
-TEST_F(GameManagerTest, ShouldExist_WhenStateIsNotExit_ReturnsFalse) {
+TEST_F(GameManagerTest, ShouldExit_WhenStateIsNotExit_ReturnsFalse) {
     EXPECT_CALL(*m_mockRouter, currentState()).WillOnce(testing::ReturnRef(m_mockState));
     EXPECT_CALL(m_mockState, getCode()).WillOnce(testing::Return("main_menu"));
 
-    ASSERT_FALSE(m_gameManager->shouldExist());
+    ASSERT_FALSE(m_gameManager->shouldExit());
 }

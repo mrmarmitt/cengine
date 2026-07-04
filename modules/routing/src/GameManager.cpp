@@ -2,11 +2,11 @@
 
 #include <cengine/core/IScene.hpp>
 
-#include <iostream>
 #include <utility>
 
 #include <cengine/routing/IState.hpp>
 #include <cengine/routing/IRouter.hpp>
+#include <cengine/routing/StateCodes.hpp>
 
 namespace cengine::routing {
 
@@ -39,13 +39,11 @@ void GameManager::onExit() {
     }
 }
 
-bool GameManager::shouldExist() const {
-    return m_routerService->currentState().getCode() == "exit";
+bool GameManager::shouldExit() const {
+    return m_routerService->currentState().getCode() == kExitStateCode;
 }
 
 void GameManager::cleanup() {
-    // std::println("");
-    std::cout << "TerminalGameManager: cleanup" << std::endl;
 }
 
 } // namespace cengine::routing
