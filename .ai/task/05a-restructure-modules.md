@@ -1,6 +1,6 @@
 # 05a — Reorganização estrutural: `cengine::core` + `cengine::routing`
 
-- **Status:** todo
+- **Status:** done ✅ (2026-07-04, branch `feature/05a-restructure-modules`)
 - **Prioridade:** 🔴 Alta (arquitetural)
 - **Categoria:** Arquitetura / build
 - **Depende de:** 01 (rede de segurança de `override` ativa)
@@ -56,11 +56,25 @@ cengine/
 
 ## Critérios de aceite
 
-- [ ] `cengine::core` e `cengine::routing` existem como targets separados, com
+- [x] `cengine::core` e `cengine::routing` existem como targets separados, com
       `routing` dependendo `PUBLIC` do `core`.
-- [ ] Namespaces `cengine::core` / `cengine::routing` aplicados.
-- [ ] `ctest` continua **30/30**, comportamento idêntico (é move, não redesign).
-- [ ] Um consumidor consegue linkar só `cengine::core` e buildar o loop sem routing.
+- [x] Namespaces `cengine::core` / `cengine::routing` aplicados.
+- [x] `ctest` continua **30/30**, comportamento idêntico (é move, não redesign).
+- [x] Um consumidor consegue linkar só `cengine::core` e buildar o loop sem routing.
+
+## Resultado da execução
+
+- Novo layout: `core/` (cengine::core) + `modules/routing/` (cengine::routing,
+  dep `PUBLIC` no core) + `tests/` (por camada: `core/`, `routing/`, `mock/`).
+- Includes migrados para `<cengine/core/…>` e `<cengine/routing/…>` (fim dos
+  caminhos relativos `../../../`). `IState` migrado de core → routing.
+- Namespaces `cengine::core` / `cengine::routing` aplicados em toda a base.
+- CMake: top-level agregador com `option(CENGINE_BUILD_ROUTING)` e
+  `option(CENGINE_BUILD_TESTS)`; `target_compile_features(cengine_core PUBLIC
+  cxx_std_23)`.
+- Verificação: build limpo, **`ctest` 30/30 verde**, e core buildando **sozinho**
+  com `-DCENGINE_BUILD_ROUTING=OFF` (opt-in comprovado).
+- Absorveu a tarefa 03 (namespaces por camada).
 
 ## Riscos
 
