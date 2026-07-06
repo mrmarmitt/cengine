@@ -18,6 +18,11 @@ public:
     virtual void commitStateChange() = 0;
 
     [[nodiscard]] virtual const IState& currentState() const = 0;
+
+    // Contrato de tempo de vida: a referência retornada é válida apenas até a
+    // próxima navegação (commitStateChange), que pode descarregar a cena atual.
+    // NÃO retenha esta referência através de uma troca de estado — obtenha-a
+    // novamente após navegar. Ver .ai/task/06-scene-lifetime.md.
     [[nodiscard]] virtual core::IScene& currentScene() = 0;
 };
 

@@ -17,6 +17,10 @@ public:
     virtual IState& getNextStateGame() const = 0;
     virtual void persisteCurrentState() = 0;
     virtual void persistNextState(std::unique_ptr<IState> state) = 0;
+    // Contrato de tempo de vida: a referência retornada aponta para dentro do
+    // mapa interno de cenas e é invalidada por unloadScene(name)/unloadAll().
+    // NÃO retenha a referência através de um desses unloads. Ver
+    // .ai/task/06-scene-lifetime.md.
     virtual core::IScene& getScene(const std::string& name) = 0;
     virtual void unloadScene(const std::string& name) = 0;
     virtual void unloadAll() = 0;

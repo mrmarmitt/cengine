@@ -39,6 +39,7 @@ if(CENGINE_BUILD_ROUTING)
     "${CMAKE_CURRENT_SOURCE_DIR}/routing/GameManagerTest.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/routing/RouterInMemoryTest.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/routing/SceneRepositoryTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/routing/integration/SceneLifetimeTest.cpp"
   )
   target_link_libraries(cengine_tests PRIVATE cengine::routing)
 endif()

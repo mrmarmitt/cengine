@@ -1,6 +1,6 @@
 # 06 — Corrigir ciclo de vida / referências de cena (risco de dangling)
 
-- **Status:** todo
+- **Status:** done (opção A — fix escopado + teste sob ASan)
 - **Prioridade:** 🟡 Média
 - **Categoria:** Arquitetura / correção
 - **Depende de:** 05a (estrutura modular) e 05b (desenho final do Router/Repository)
@@ -62,9 +62,25 @@ que possa descarregá-la.
 
 ## Critérios de aceite
 
-- [ ] Nenhum caminho retém referência a cena através de um `unloadScene`.
-- [ ] Teste cobrindo o cenário de navegação + unload.
-- [ ] (Se ASan disponível) suíte passa limpa sob AddressSanitizer.
+- [x] Nenhum caminho retém referência a cena através de um `unloadScene`.
+- [x] Teste cobrindo o cenário de navegação + unload.
+- [x] (Se ASan disponível) suíte passa limpa sob AddressSanitizer.
+
+## Decisão e implementação (opção A)
+
+Escolhida a **opção 1 (escopo estreito) reforçada**, preservando a interface
+`IScene&` recém-desenhada em 05b (a opção 3/`shared_ptr` só fecharia a janela do
+`GameManager` se `IRouter::currentScene()` também passasse a devolver
+`shared_ptr`, vazando semântica de posse na interface pública). Entregue:
+
+1. `GameManager::onExit()` isola a referência da cena em um escopo próprio, que se
+   encerra **antes** de `commitStateChange()` — a ref não pode sobreviver ao
+   unload por construção.
+2. Contrato de tempo de vida documentado em `IRouter::currentScene()` e
+   `ISceneRepository::getScene()` ("válida só até a próxima navegação/unload").
+3. Teste de regressão `tests/routing/integration/SceneLifetimeTest.cpp` dirige as
+   implementações reais por navegar→unload; sob o preset `asan` / job de CI
+   (tarefa 08) qualquer use-after-free futuro falha o teste.
 
 ## Riscos
 
