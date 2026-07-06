@@ -1,35 +1,45 @@
 {
-    "version": 8,
+    "version": 4,
     "configurePresets": [
         {
-            "name": "msys2-mingw",
-            "displayName": "GCC 15.1.0 x86_64-w64-mingw32 (ucrt64)",
-            "description": "Compila com GCC do MSYS2 UCRT64",
-            "generator": "MinGW Makefiles",
+            "name": "debug",
+            "displayName": "Debug (Ninja)",
+            "description": "Build de debug portável — detecta o compilador do PATH",
+            "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "C:/msys64/ucrt64/bin/gcc.exe",
-                "CMAKE_CXX_COMPILER": "C:/msys64/ucrt64/bin/g++.exe",
-                "CMAKE_MAKE_PROGRAM": "C:/msys64/ucrt64/bin/mingw32-make.exe"
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release (Ninja)",
+            "description": "Build de release portável — detecta o compilador do PATH",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "asan",
+            "displayName": "Debug + ASan/UBSan",
+            "description": "Debug com AddressSanitizer + UndefinedBehaviorSanitizer (GCC/Clang, ideal em Linux/CI)",
+            "inherits": "debug",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-fsanitize=address,undefined -fno-omit-frame-pointer -g"
             }
         }
     ],
     "buildPresets": [
-        {
-            "name": "msys2-mingw",
-            "configurePreset": "msys2-mingw",
-            "description": "Build com GCC 15.1.0 UCRT64",
-            "jobs": 8
-        }
+        { "name": "debug", "configurePreset": "debug", "jobs": 8 },
+        { "name": "release", "configurePreset": "release", "jobs": 8 },
+        { "name": "asan", "configurePreset": "asan", "jobs": 8 }
     ],
     "testPresets": [
-        {
-            "name": "msys2-mingw",
-            "configurePreset": "msys2-mingw",
-            "output": {
-                "outputOnFailure": true
-            }
-        }
+        { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } },
+        { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
+        { "name": "asan", "configurePreset": "asan", "output": { "outputOnFailure": true } }
     ]
 }

@@ -1,6 +1,13 @@
 # 07 — Alinhar padrão C++ entre cengine e consumidores
 
-- **Status:** todo
+- **Status:** done ✅ (2026-07-04, branch `feature/build-ecosystem-07-08`)
+
+> Executado: `target_compile_features(... PUBLIC cxx_std_23)` agora em
+> `cengine_core` (desde a 05a) **e** `cengine_routing` — o requisito de padrão
+> propaga automaticamente para quem linkar os targets. Documentado no README
+> (seção *Building*): CEngine exige C++23 e consumidores não precisam setar o
+> padrão na mão. Alinhar o 8Puzzle (C++20) fica para quando ele consumir a nova
+> tag.
 - **Prioridade:** 🟡 Média
 - **Categoria:** Ecossistema / compatibilidade
 - **Depende de:** — (independente do código; coordenar com 03, que já é breaking)

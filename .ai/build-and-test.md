@@ -22,8 +22,12 @@ com segurança (rodar `ctest` a cada tarefa).
 
 ## Como reproduzir
 
-O working directory precisa ser a raiz do projeto **cengine**. O preset
-`msys2-mingw` exige o MSYS2 no PATH (por causa do `g++`/`ninja`).
+O working directory precisa ser a raiz do projeto **cengine**. Nesta máquina
+(MSYS2 UCRT64) o preset que funciona é o `msys2-mingw`, que vive em
+`CMakeUserPresets.json` (**não versionado** — ver tarefa 08). Os presets
+portáveis versionados (`debug`/`release`/`asan`, geradores Ninja) são para
+CI/outras máquinas; no MSYS2 o `ninja` embutido mastiga os paths nativos do
+compilador, então prefira o preset local `msys2-mingw` aqui.
 
 ```powershell
 # 1. Garantir o toolchain MSYS2 no PATH

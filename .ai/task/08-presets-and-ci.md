@@ -1,6 +1,17 @@
 # 08 — Presets portáveis + CI (Debug + sanitizers)
 
-- **Status:** todo
+- **Status:** done ✅ (2026-07-04, branch `feature/build-ecosystem-07-08`)
+
+> Executado:
+> - `CMakePresets.json` agora tem presets **portáveis** (`debug`/`release`/`asan`,
+>   Ninja, sem paths hardcoded). O preset machine-specific `msys2-mingw` migrou
+>   para `CMakeUserPresets.json` (gitignorado).
+> - CI ganhou o job `build-and-test-linux-sanitizers` (Debug + ASan/UBSan).
+> - Documentado no README (seção *Building*).
+> - Ressalva conhecida: no MSYS2 desta máquina o `ninja` embutido mastiga paths
+>   nativos, então os presets Ninja são validados em CI/outras máquinas; local
+>   valida-se pelo `msys2-mingw`. Presets portáveis confirmados via
+>   `cmake --list-presets`.
 - **Prioridade:** 🟢 Baixa
 - **Categoria:** Ecossistema / build
 - **Depende de:** — (independente; porém ASan ajuda a validar a tarefa 06)

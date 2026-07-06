@@ -40,3 +40,6 @@
 
 # CLion
 *.idea
+
+# CMake presets específicos de máquina (compiladores/paths locais)
+CMakeUserPresets.json
