@@ -27,7 +27,11 @@ segurança barata** e **separando "mover" de "redesenhar"**.
 7. **Ciclo 0.2.0 — design de API (12 → 13):** primeiro tirar a contabilidade
    de `onEnter` da `IScene` (12, cirurgia pequena), depois separar Router
    (máquina de estados) de Repository (provedor de cenas) (13). As duas são
-   *breaking* — agrupar no bump 0.2.0.
+   *breaking* — agrupar no bump 0.2.0. ✅ (release 0.2.0 publicado)
+8. **Ciclo 0.3.0 — tempo no loop (14):** `update(dt)` com fixed timestep no
+   `EngineManager` — a última lacuna estrutural do core e o pré-requisito do
+   futuro `cengine::physics` (ADR 0001). *Breaking* nas portas
+   `IGameManager`/`IScene` — âncora do bump 0.3.0.
 
 > Regra prática: manter a suíte de testes **verde a cada tarefa**. Nenhuma
 > tarefa deve ser mergeada com testes quebrados.
@@ -63,6 +67,7 @@ Ler antes de executar as tarefas de arquitetura:
 | 11 | [Documentação (Doxygen + uso no README)](11-documentation.md) | 🟢 Baixa | Documentação |
 | 12 | [Tirar a contabilidade de ativação (`onEnter`) da `IScene`](12-scene-activation-bookkeeping.md) | 🟡 Média | Arquitetura |
 | 13 | [Separar responsabilidades: Router × Repository](13-router-repository-responsibilities.md) | 🔴 Alta (arq.) | Arquitetura |
+| 14 | [Tempo no loop: `update(dt)` separado de `render()`](14-time-in-the-loop.md) | 🔴 Alta (arq.) | Arquitetura |
 
 ## Legenda de status
 
