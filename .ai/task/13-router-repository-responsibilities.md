@@ -123,6 +123,14 @@ Uma responsabilidade por peça:
 
 ## Critérios de aceite
 
+- [ ] **Eviction da cena ativa resolvido** (achado do review do PR #11): com o
+      router dono da política de unload, descarregar a cena do estado ativo
+      sem navegação deve (a) ser impossível pela API pública, ou (b) disparar
+      reativação (`onEnter()` na instância recriada). Hoje a recriação lazy
+      após `unloadScene`/`unloadAll` devolve uma cena que nunca recebe
+      `onEnter()`, porque o tracking do `GameManager` é por código de estado
+      (rastrear por ponteiro não serve: o alocador tende a reusar o endereço
+      na recriação imediata). Cobrir com teste de integração.
 - [ ] `ISceneRepository` sem nenhum método de estado/navegação.
 - [ ] `RouterInMemory` é o único dono do par atual/próximo;
       `hasPendingStateChange()` implementado por ponteiro nulo, não por

@@ -41,9 +41,16 @@ public:
     virtual core::IScene& getScene(const std::string& name) = 0;
 
     /// Descarrega a cena @p name (será recriada via factory se pedida de novo).
+    /// @warning Não descarregue a cena do estado ATIVO sem uma navegação
+    ///          pendente: a recriação lazy devolve uma instância nova sem que
+    ///          `onEnter()` rode de novo (a contabilidade de ativação do
+    ///          `GameManager` assume que a cena ativa vive até o commit da
+    ///          navegação). A política de eviction será centralizada no router
+    ///          na task 13.
     virtual void unloadScene(const std::string& name) = 0;
 
     /// Descarrega todas as cenas instanciadas.
+    /// @warning Mesma restrição de `unloadScene()` quanto à cena ativa.
     virtual void unloadAll() = 0;
 
     /// @return true se o próximo estado difere do atual (troca pendente).
