@@ -1,10 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include <cengine/routing/IState.hpp>
 #include <cengine/core/IScene.hpp>
 
-#include <mock/MockState.hpp>
 #include <mock/MockScene.hpp>
 
 #include <cengine/routing/SceneRepository.hpp>
@@ -12,23 +10,14 @@
 using namespace cengine::core;
 using namespace cengine::routing;
 
+// O repositório é puro provisionamento (task 13): factories, instanciação
+// lazy, cache e unload. A máquina de estados é testada no RouterInMemoryTest.
 class SceneRepositoryTest : public ::testing::Test {
 protected:
-    std::unique_ptr<MockState> initialState;
     std::unique_ptr<SceneRepository> sceneRepository;
 
     void SetUp() override {
-        initialState = std::make_unique<MockState>();
-
-        EXPECT_CALL(*initialState, clone())
-            .WillOnce(::testing::Return(std::make_unique<MockState>()))
-            .WillOnce(::testing::Return(std::make_unique<MockState>()));
-
-        // Define o comportamento dos métodos getCode e getName para evitar erros de mock
-        EXPECT_CALL(*initialState, getCode()).WillRepeatedly(::testing::Return("InitialStateCode"));
-        EXPECT_CALL(*initialState, getName()).WillRepeatedly(::testing::Return("InitialStateName"));
-
-        sceneRepository = std::make_unique<SceneRepository>(std::move(initialState));
+        sceneRepository = std::make_unique<SceneRepository>();
     }
 };
 
@@ -142,71 +131,4 @@ TEST_F(SceneRepositoryTest, UnloadAllRemovesAllScenes) {
 
     ASSERT_EQ(factory1CallCount, 2);
     ASSERT_EQ(factory2CallCount, 2);
-}
-
-// Teste: persisteCurrentState deve clonar m_nextState para m_currentState.
-TEST_F(SceneRepositoryTest, PersistCurrentStateClonesNextState) {
-    auto newStateForNext = std::make_unique<MockState>();
-
-    // 1. Move o novo estado para o repositório.
-    sceneRepository->persistNextState(std::move(newStateForNext));
-
-    // 2. Obtém uma referência ao objeto que agora está em m_nextState
-    IState& nextStateRef = sceneRepository->getNextStateGame();
-
-    // 3. Define a única expectativa de chamada que realmente acontecerá
-    EXPECT_CALL(static_cast<MockState&>(nextStateRef), clone())
-        .WillOnce(::testing::Return(std::make_unique<MockState>()));
-
-    // 4. Chama o método que irá disparar o clone()
-    sceneRepository->persisteCurrentState();
-}
-
-// Teste: persistNextState deve mover a propriedade de unique_ptr.
-TEST_F(SceneRepositoryTest, PersistNextStateMovesNewState) {
-    auto originalNextState = &sceneRepository->getNextStateGame();
-
-    auto brandNewState = std::make_unique<MockState>();
-    auto brandNewStatePtr = brandNewState.get();
-
-    // Persiste o novo estado movendo-o para a propriedade interna
-    sceneRepository->persistNextState(std::move(brandNewState));
-
-    // Verifica se a propriedade interna agora aponta para o novo objeto
-    ASSERT_EQ(&sceneRepository->getNextStateGame(), brandNewStatePtr);
-    // E se a propriedade anterior não é mais a mesma
-    ASSERT_NE(&sceneRepository->getNextStateGame(), originalNextState);
-}
-
-
-// Teste: hasPendingStateChange deve retornar true se os códigos de estado forem diferentes.
-TEST_F(SceneRepositoryTest, HasPendingStateChangeReturnsTrueIfCodesDifferent) {
-    auto nextStateMock = std::make_unique<MockState>();
-
-    // Define o comportamento de getCode() para os estados
-    EXPECT_CALL(static_cast<MockState&>(sceneRepository->getCurrentStateGame()), getCode())
-        .WillOnce(::testing::Return("SomeCode"));
-    EXPECT_CALL(*nextStateMock, getCode()).WillOnce(::testing::Return("DifferentCode"));
-
-    // Persiste o novo estado
-    sceneRepository->persistNextState(std::move(nextStateMock));
-
-    // A função deve retornar true porque os códigos são diferentes
-    EXPECT_TRUE(sceneRepository->hasPendingStateChange());
-}
-
-// Teste: hasPendingStateChange deve retornar false se os códigos de estado forem iguais.
-TEST_F(SceneRepositoryTest, HasPendingStateChangeReturnsFalseIfCodesSame) {
-    auto nextStateMock = std::make_unique<MockState>();
-
-    // Define o comportamento de getCode() para os estados
-    EXPECT_CALL(static_cast<MockState&>(sceneRepository->getCurrentStateGame()), getCode())
-        .WillOnce(::testing::Return("SameCode"));
-    EXPECT_CALL(*nextStateMock, getCode()).WillOnce(::testing::Return("SameCode"));
-
-    // Persiste o novo estado
-    sceneRepository->persistNextState(std::move(nextStateMock));
-
-    // A função deve retornar false porque os códigos são os mesmos
-    EXPECT_FALSE(sceneRepository->hasPendingStateChange());
 }

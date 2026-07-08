@@ -1,6 +1,6 @@
 # 13 — Separar responsabilidades: Router (navegação) × Repository (cenas)
 
-- **Status:** todo
+- **Status:** done ✅ (opção 1 + posse exclusiva, 2026-07-08, branch `feature/13-router-repository-responsibilities`)
 - **Prioridade:** 🔴 Alta (arquitetural)
 - **Categoria:** Arquitetura
 - **Depende de:** 05b (API do Router estável), 12 (IScene enxuta — fazer antes,
@@ -123,7 +123,7 @@ Uma responsabilidade por peça:
 
 ## Critérios de aceite
 
-- [ ] **Eviction da cena ativa resolvido** (achado do review do PR #11): com o
+- [x] **Eviction da cena ativa resolvido** (achado do review do PR #11): com o
       router dono da política de unload, descarregar a cena do estado ativo
       sem navegação deve (a) ser impossível pela API pública, ou (b) disparar
       reativação (`onEnter()` na instância recriada). Hoje a recriação lazy
@@ -131,13 +131,43 @@ Uma responsabilidade por peça:
       `onEnter()`, porque o tracking do `GameManager` é por código de estado
       (rastrear por ponteiro não serve: o alocador tende a reusar o endereço
       na recriação imediata). Cobrir com teste de integração.
-- [ ] `ISceneRepository` sem nenhum método de estado/navegação.
-- [ ] `RouterInMemory` é o único dono do par atual/próximo;
+      → **Resolvido pela via (a), por construção**: o router assume posse
+      exclusiva do repositório (`unique_ptr` no construtor) — não sobra
+      referência externa para evictar por fora. O reload deliberado da cena
+      atual é `requestState()` com o mesmo código (nova semântica), coberto
+      pelo teste de integração
+      `SceneLifetimeTest.RequestingCurrentStateReloadsAndReactivatesScene`.
+- [x] `ISceneRepository` sem nenhum método de estado/navegação.
+- [x] `RouterInMemory` é o único dono do par atual/próximo;
       `hasPendingStateChange()` implementado por ponteiro nulo, não por
       comparação de código.
-- [ ] `IState` sem `clone()`.
-- [ ] Porta `IRouter` inalterada; `GameManager` inalterado (fora renomes).
-- [ ] Suíte verde (incluindo `SceneLifetimeTest` sem mudanças de asserção).
+- [x] `IState` sem `clone()`.
+- [x] Porta `IRouter` inalterada; `GameManager` inalterado (fora renomes).
+- [x] Suíte verde (incluindo `SceneLifetimeTest` sem mudanças de asserção).
+
+## Resultado da execução
+
+Executada a **opção 1**, com um refinamento além do desenho original: em vez de
+`shared_ptr`, o `RouterInMemory` recebe o repositório por **`unique_ptr`**
+(posse exclusiva). Isso resolve o critério do eviction pela via (a) sem crescer
+nenhuma interface.
+
+- `ISceneRepository` enxuto: `registerFactory` / `getScene` / `unloadScene` /
+  `unloadAll` — zero navegação. `SceneRepository` ficou default-construtível
+  (de carona: lookup duplo do mapa em `getScene()` eliminado via `emplace`).
+- `RouterInMemory(unique_ptr<ISceneRepository>, unique_ptr<IState> initial)`:
+  dono de `m_currentState`/`m_nextState`; pending = `m_nextState != nullptr`;
+  `commitStateChange()` com guarda de no-op. Os nomes
+  `persisteCurrentState`/`getCurrentStateGame`/etc. morreram com a interface.
+- **Mudança de semântica**: `requestState()` com o código do estado atual
+  agora é uma troca válida (reload deliberado — descarrega, recria e reativa);
+  antes era indistinguível de "nada pendente". Documentado em `IRouter`.
+- `IState` sem `clone()` (fecha a opção 3 da task 10 de carona); estados
+  movidos por `unique_ptr`, sem Prototype.
+- Testes: `RouterInMemoryTest` reescrito (máquina de estados real, 7 testes);
+  `SceneRepositoryTest` só provisionamento (6); `FakeState` compartilhado em
+  `tests/mock/`; `MockState`/`MockSceneRepository` enxugados. Suíte: **29/29**.
+- README (Minimal assembly) atualizado para a nova fiação.
 
 ## Riscos
 
@@ -147,10 +177,10 @@ fazer depois da 12 (IScene menor = menos mocks para tocar duas vezes).
 
 ## Pendências fora do escopo
 
-- **8Puzzle:** o `main.cpp` semeia o `SceneRepository` com o estado inicial e o
-  compartilha com o `GameRouter` do jogo. Na nova fiação, o estado inicial vai
-  para o `RouterInMemory`, e a fachada `GameRouter` deve passar a envolver o
-  `IRouter` (não o repositório). Ajustar ao consumir a 0.2.0.
+- **8Puzzle** (ao consumir a 0.2.0): a fachada `GameRouter` passa a envolver o
+  `IRouter` (não o repositório); o `main.cpp` registra as factories no
+  repositório e MOVE a posse para o `RouterInMemory` junto do estado inicial;
+  remover os `clone()` dos `StateGame`.
 - **Política de keep-alive de cenas** (não destruir a cena que sai no commit):
   fica mais fácil depois desta tarefa (é decisão isolada dentro de
   `commitStateChange()`), mas é tarefa própria — depende da 12 para `onEnter`

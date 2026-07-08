@@ -10,32 +10,19 @@
 #include "gtest/gtest.h"
 
 #include <memory>
-#include <string>
 #include <utility>
 
 #include <cengine/core/IScene.hpp>
-#include <cengine/routing/IState.hpp>
 #include <cengine/routing/SceneRepository.hpp>
 #include <cengine/routing/RouterInMemory.hpp>
 #include <cengine/routing/GameManager.hpp>
+
+#include <mock/FakeState.hpp>
 
 using namespace cengine::core;
 using namespace cengine::routing;
 
 namespace {
-
-class FakeState final : public IState {
-    std::string m_code;
-
-public:
-    explicit FakeState(std::string code) : m_code(std::move(code)) {}
-
-    [[nodiscard]] std::string getCode() const override { return m_code; }
-    [[nodiscard]] std::string getName() const override { return m_code; }
-    [[nodiscard]] std::unique_ptr<IState> clone() const override {
-        return std::make_unique<FakeState>(m_code);
-    }
-};
 
 // Cena que rastreia seu tempo de vida (contador de instâncias vivas), quantas
 // vezes foi ativada (onEnter) e se seu onExit() foi chamado. Permite provar que
@@ -69,12 +56,14 @@ protected:
     int onEnterCountA{0};
     int onEnterCountB{0};
 
-    std::shared_ptr<SceneRepository> repository;
     std::shared_ptr<RouterInMemory> router;
     std::unique_ptr<GameManager> gameManager;
 
     void SetUp() override {
-        repository = std::make_shared<SceneRepository>(std::make_unique<FakeState>("A"));
+        // Fiação recomendada pós-task 13: o jogo registra as factories e
+        // TRANSFERE a posse do repositório ao router — nenhuma referência
+        // externa sobra para descarregar cenas por fora da navegação.
+        auto repository = std::make_unique<SceneRepository>();
         repository->registerFactory("A", [this]() {
             return std::make_unique<TrackedScene>(&liveA, &onExitCalledA, &onEnterCountA);
         });
@@ -82,7 +71,8 @@ protected:
             return std::make_unique<TrackedScene>(&liveB, &onExitCalledB, &onEnterCountB);
         });
 
-        router = std::make_shared<RouterInMemory>(repository);
+        router = std::make_shared<RouterInMemory>(
+            std::move(repository), std::make_unique<FakeState>("A"));
         gameManager = std::make_unique<GameManager>(router);
     }
 };
@@ -137,4 +127,30 @@ TEST_F(SceneLifetimeTest, NavigatingBackReactivatesScene) {
     EXPECT_EQ(onEnterCountA, 2);
     EXPECT_EQ(liveA, 1);
     EXPECT_EQ(liveB, 0); // B foi descarregada na volta
+}
+
+// Critério de aceite da task 13 (achado do review do PR #11): o caminho
+// SUPORTADO para descartar/recriar a cena do estado ativo é requestState com o
+// mesmo código — o commit descarrega a instância antiga e a próxima iteração
+// recria E reativa a cena (onEnter roda na instância nova). Eviction por fora
+// da navegação deixou de ser possível por construção: o router é o único dono
+// do repositório.
+TEST_F(SceneLifetimeTest, RequestingCurrentStateReloadsAndReactivatesScene) {
+    // Ativa A.
+    gameManager->onEnter();
+    ASSERT_EQ(liveA, 1);
+    ASSERT_EQ(onEnterCountA, 1);
+
+    // Reload deliberado: pedir o próprio estado "A".
+    router->requestState(std::make_unique<FakeState>("A"));
+    ASSERT_TRUE(router->hasPendingStateChange());
+
+    gameManager->onExit();
+    EXPECT_TRUE(onExitCalledA);  // a instância antiga recebeu onExit
+    EXPECT_EQ(liveA, 0);         // e foi destruída no commit
+
+    // A próxima iteração recria a cena via factory e a REATIVA.
+    gameManager->onEnter();
+    EXPECT_EQ(liveA, 1);
+    EXPECT_EQ(onEnterCountA, 2);
 }

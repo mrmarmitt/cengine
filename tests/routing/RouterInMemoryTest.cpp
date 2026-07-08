@@ -8,71 +8,76 @@
 #include <cengine/routing/IState.hpp>
 #include <cengine/routing/RouterInMemory.hpp>
 
+#include <mock/FakeState.hpp>
 #include <mock/MockScene.hpp>
 #include <mock/MockSceneRepository.hpp>
-#include <mock/MockState.hpp>
 
 using namespace cengine::core;
 using namespace cengine::routing;
 
+// O router é o dono da máquina de estados (task 13): os testes exercitam o
+// par atual/próximo de verdade e usam o repositório mockado apenas para
+// observar o provisionamento (getScene/unloadScene).
 class RouterInMemoryTest : public ::testing::Test {
 protected:
-    std::shared_ptr<MockSceneRepository> mockSceneRepository;
+    MockSceneRepository* mockSceneRepository{nullptr}; // observado; posse é do router
     std::unique_ptr<RouterInMemory> routerService;
 
-    MockState mockCurrentState;
     MockScene mockScene;
 
     void SetUp() override {
-        mockSceneRepository = std::make_shared<MockSceneRepository>();
-        routerService = std::make_unique<RouterInMemory>(mockSceneRepository);
+        auto repository = std::make_unique<MockSceneRepository>();
+        mockSceneRepository = repository.get();
+        routerService = std::make_unique<RouterInMemory>(
+            std::move(repository), std::make_unique<FakeState>("A"));
     }
 };
 
-TEST_F(RouterInMemoryTest, RequestStateDelegatesToRepository) {
-    auto newState = std::make_unique<MockState>();
-
-    EXPECT_CALL(*mockSceneRepository, persistNextState(testing::A<std::unique_ptr<IState>>())).Times(1);
-
-    routerService->requestState(std::move(newState));
+TEST_F(RouterInMemoryTest, CurrentStateIsTheInitialState) {
+    ASSERT_EQ(routerService->currentState().getCode(), "A");
 }
 
-TEST_F(RouterInMemoryTest, CurrentStateDelegatesCorrectly) {
-    EXPECT_CALL(*mockSceneRepository, getCurrentStateGame()).WillOnce(testing::ReturnRef(mockCurrentState));
-
-    const IState& returnedState = routerService->currentState();
-
-    ASSERT_EQ(&returnedState, &mockCurrentState);
+TEST_F(RouterInMemoryTest, HasPendingStateChangeIsFalseInitially) {
+    ASSERT_FALSE(routerService->hasPendingStateChange());
 }
 
-TEST_F(RouterInMemoryTest, CurrentSceneDelegatesCorrectly) {
-    const std::string expectedCode = "MENU";
+TEST_F(RouterInMemoryTest, RequestStateSchedulesWithoutChangingCurrentState) {
+    routerService->requestState(std::make_unique<FakeState>("B"));
 
-    EXPECT_CALL(*mockSceneRepository, getCurrentStateGame()).WillOnce(testing::ReturnRef(mockCurrentState));
-    EXPECT_CALL(mockCurrentState, getCode()).WillOnce(testing::Return(expectedCode));
-    EXPECT_CALL(*mockSceneRepository, getScene(expectedCode)).WillOnce(testing::ReturnRef(mockScene));
+    ASSERT_TRUE(routerService->hasPendingStateChange());
+    ASSERT_EQ(routerService->currentState().getCode(), "A"); // troca ainda não efetivada
+}
+
+TEST_F(RouterInMemoryTest, RequestStateWithSameCodeSchedulesReload) {
+    // Pedir o código do estado atual é uma troca válida (reload deliberado da
+    // cena) — antes da task 13 isso era indistinguível de "nada pendente".
+    routerService->requestState(std::make_unique<FakeState>("A"));
+
+    ASSERT_TRUE(routerService->hasPendingStateChange());
+}
+
+TEST_F(RouterInMemoryTest, CommitStateChangeUnloadsOldSceneAndPromotesNext) {
+    EXPECT_CALL(*mockSceneRepository, unloadScene("A")).Times(1);
+
+    routerService->requestState(std::make_unique<FakeState>("B"));
+    routerService->commitStateChange();
+
+    ASSERT_EQ(routerService->currentState().getCode(), "B");
+    ASSERT_FALSE(routerService->hasPendingStateChange());
+}
+
+TEST_F(RouterInMemoryTest, CommitStateChangeWithoutPendingChangeIsNoOp) {
+    EXPECT_CALL(*mockSceneRepository, unloadScene(testing::_)).Times(0);
+
+    routerService->commitStateChange();
+
+    ASSERT_EQ(routerService->currentState().getCode(), "A");
+}
+
+TEST_F(RouterInMemoryTest, CurrentSceneResolvesSceneOfCurrentState) {
+    EXPECT_CALL(*mockSceneRepository, getScene("A")).WillOnce(testing::ReturnRef(mockScene));
 
     IScene& returnedScene = routerService->currentScene();
 
     ASSERT_EQ(&returnedScene, &mockScene);
-}
-
-TEST_F(RouterInMemoryTest, CommitStateChangeCallsMethodsInCorrectOrder) {
-    const std::string expectedCode = "OLD_SCENE";
-    testing::InSequence sequence;
-
-    EXPECT_CALL(*mockSceneRepository, getCurrentStateGame()).WillOnce(testing::ReturnRef(mockCurrentState));
-    EXPECT_CALL(mockCurrentState, getCode()).WillOnce(testing::Return(expectedCode));
-    EXPECT_CALL(*mockSceneRepository, unloadScene(expectedCode)).Times(1);
-    EXPECT_CALL(*mockSceneRepository, persisteCurrentState()).Times(1);
-
-    routerService->commitStateChange();
-}
-
-TEST_F(RouterInMemoryTest, HasPendingStateChangeDelegatesCorrectly) {
-    EXPECT_CALL(*mockSceneRepository, hasPendingStateChange()).WillOnce(testing::Return(true));
-    ASSERT_TRUE(routerService->hasPendingStateChange());
-
-    EXPECT_CALL(*mockSceneRepository, hasPendingStateChange()).WillOnce(testing::Return(false));
-    ASSERT_FALSE(routerService->hasPendingStateChange());
 }

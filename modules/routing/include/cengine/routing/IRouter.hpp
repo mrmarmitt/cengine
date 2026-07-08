@@ -25,6 +25,8 @@ public:
     virtual ~IRouter() = default;
 
     /// Agenda a transição para @p state (efetivada depois, em commitStateChange).
+    /// Solicitar o código do estado ATUAL é válido e efetiva um reload: a cena
+    /// é descarregada, recriada e reativada (`onEnter` roda de novo).
     virtual void requestState(std::unique_ptr<IState> state) = 0;
 
     /// @return true se há uma troca de estado agendada e ainda não efetivada.

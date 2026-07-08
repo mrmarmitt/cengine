@@ -98,8 +98,9 @@ target_link_libraries(my_game PRIVATE
 ### Minimal assembly
 
 The engine is **graphics-agnostic**: you implement the ports (window + scenes)
-and the engine drives the loop. A minimal game wires up a window manager, a
-router over a scene repository, and hands both to the `EngineManager`:
+and the engine drives the loop. A minimal game registers its scene factories in
+a repository, hands its ownership to the router (which owns the state machine),
+and gives everything to the `EngineManager`:
 
 ```cpp
 #include <memory>
@@ -111,20 +112,19 @@ router over a scene repository, and hands both to the `EngineManager`:
 using namespace cengine;
 
 int main() {
-    // 1. Repository seeded with the initial state (you provide MyState : IState).
-    auto repository = std::make_shared<routing::SceneRepository>(
-        std::make_unique<MyState>("main_menu"));
-
-    // 2. Register a scene factory per state code (lazy instantiation).
-    //    You provide MenuScene / GameplayScene : cengine::core::IScene.
+    // 1. Repository = scene provider: register a factory per state code
+    //    (lazy instantiation). You provide MenuScene / GameplayScene : IScene.
+    auto repository = std::make_unique<routing::SceneRepository>();
     repository->registerFactory("main_menu", [] { return std::make_unique<MenuScene>(); });
     repository->registerFactory("gameplay",  [] { return std::make_unique<GameplayScene>(); });
 
-    // 3. Router over the repository, exposed to the game as an IGameManager.
-    auto router      = std::make_shared<routing::RouterInMemory>(repository);
+    // 2. Router = state machine. It takes OWNERSHIP of the repository and the
+    //    initial state (you provide MyState : IState).
+    auto router = std::make_shared<routing::RouterInMemory>(
+        std::move(repository), std::make_unique<MyState>("main_menu"));
     auto gameManager = std::make_unique<routing::GameManager>(router);
 
-    // 4. Run the loop (you provide MyWindowManager : cengine::core::IWindowManager).
+    // 3. Run the loop (you provide MyWindowManager : cengine::core::IWindowManager).
     core::EngineManager engine{
         std::make_unique<MyWindowManager>(),
         std::move(gameManager)
@@ -135,8 +135,10 @@ int main() {
 ```
 
 To navigate, a scene calls `router->requestState(std::make_unique<MyState>("gameplay"))`;
-the switch is committed at the end of the frame (`onExit`). Routing to the
-`cengine::routing::kExitStateCode` state stops the loop.
+the switch is committed at the end of the frame (`onExit`). Requesting the
+*current* state's code is a deliberate reload (the scene is destroyed, recreated
+and re-entered). Routing to the `cengine::routing::kExitStateCode` state stops
+the loop.
 
 The public headers carry Doxygen comments describing each contract — start from
 [`IScene`](core/include/cengine/core/IScene.hpp) and

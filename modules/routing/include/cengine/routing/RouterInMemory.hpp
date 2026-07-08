@@ -9,17 +9,29 @@
 namespace cengine::routing {
 
 /**
- * @brief `IRouter` em memória, apoiado em um `ISceneRepository`.
+ * @brief `IRouter` em memória: dono da máquina de estados (atual/próximo),
+ *        apoiado em um `ISceneRepository` que apenas provê cenas.
  *
- * Delega o estado e as cenas ao repositório; `commitStateChange()` descarrega a
- * cena do estado que sai e promove o próximo. `currentScene()` resolve a cena do
- * estado atual sob demanda (instanciação lazy pelo repositório).
+ * O router assume a posse exclusiva do repositório: o jogo registra as
+ * factories e transfere o `unique_ptr`, de modo que nenhum componente externo
+ * pode descarregar cenas por fora do ciclo de navegação (garante por
+ * construção o contrato de ativação do `GameManager` — ver .ai/task/13).
+ *
+ * `requestState()` agenda a troca; `commitStateChange()` descarrega a cena do
+ * estado que sai e promove o próximo. Solicitar o código do estado ATUAL
+ * também é uma troca válida: o commit descarrega e recria a cena (reload
+ * deliberado).
  */
 class RouterInMemory final : public IRouter {
-    std::shared_ptr<ISceneRepository> m_sceneRepository;
+    std::unique_ptr<ISceneRepository> m_sceneRepository;
+    std::unique_ptr<IState> m_currentState;
+    std::unique_ptr<IState> m_nextState; // nullptr = nenhuma troca pendente
 
 public:
-    explicit RouterInMemory(std::shared_ptr<ISceneRepository> sceneRepository);
+    /// @param sceneRepository provedor de cenas (posse transferida ao router).
+    /// @param initialState    estado ativo no início do loop.
+    RouterInMemory(std::unique_ptr<ISceneRepository> sceneRepository,
+                   std::unique_ptr<IState> initialState);
     ~RouterInMemory() override = default;
 
     void requestState(std::unique_ptr<IState> state) override;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
 namespace cengine::routing {
@@ -13,9 +12,8 @@ namespace cengine::routing {
  * do estado (ex.: `"main_menu"`, `"gameplay"`, `cengine::routing::kExitStateCode`).
  * O jogo define seus próprios estados implementando esta interface.
  *
- * `clone()` segue o padrão **Prototype**: o repositório guarda cópias
- * independentes do estado atual e do próximo, sem acoplar-se ao tipo concreto —
- * por isso o estado deve saber se duplicar.
+ * Estados são possuídos pelo router (`unique_ptr` movidos via `requestState`),
+ * então a interface não exige clonagem.
  */
 class IState {
 public:
@@ -26,9 +24,6 @@ public:
 
     /// Nome legível do estado (para logs/depuração).
     [[nodiscard]] virtual std::string getName() const = 0;
-
-    /// Cria uma cópia independente deste estado (padrão Prototype).
-    [[nodiscard]] virtual std::unique_ptr<IState> clone() const = 0;
 };
 
 } // namespace cengine::routing
