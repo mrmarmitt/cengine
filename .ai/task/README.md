@@ -31,7 +31,10 @@ segurança barata** e **separando "mover" de "redesenhar"**.
 8. **Ciclo 0.3.0 — tempo no loop (14):** `update(dt)` com fixed timestep no
    `EngineManager` — a última lacuna estrutural do core e o pré-requisito do
    futuro `cengine::physics` (ADR 0001). *Breaking* nas portas
-   `IGameManager`/`IScene` — âncora do bump 0.3.0.
+   `IGameManager`/`IScene` — âncora do bump 0.3.0. ✅ (release 0.3.0 publicado)
+9. **Ciclo 0.4.0 — modo hospedado (15):** `frame(dt)` para hosts com inversão
+   de controle (The-Forge). **Aguarda a fase 1 da PoC The-Forge no 8Puzzle**
+   validar o formato do host — não implementar por especulação.
 
 > Regra prática: manter a suíte de testes **verde a cada tarefa**. Nenhuma
 > tarefa deve ser mergeada com testes quebrados.
@@ -68,6 +71,7 @@ Ler antes de executar as tarefas de arquitetura:
 | 12 | [Tirar a contabilidade de ativação (`onEnter`) da `IScene`](12-scene-activation-bookkeeping.md) | 🟡 Média | Arquitetura |
 | 13 | [Separar responsabilidades: Router × Repository](13-router-repository-responsibilities.md) | 🔴 Alta (arq.) | Arquitetura |
 | 14 | [Tempo no loop: `update(dt)` separado de `render()`](14-time-in-the-loop.md) | 🔴 Alta (arq.) | Arquitetura |
+| 15 | [Modo hospedado: dirigir o loop de fora (`frame(dt)`)](15-hosted-loop-mode.md) | 🟡 Média | Arquitetura |
 
 ## Legenda de status
 
