@@ -40,6 +40,7 @@ public:
     ~TrackedScene() override { --(*m_liveCount); }
 
     void onEnter() override { ++(*m_onEnterCount); }
+    void update(Seconds) override {}
     void draw() override {}
     void input() override {}
     void onExit() override { *m_onExitCalled = true; }

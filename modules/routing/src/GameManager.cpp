@@ -34,6 +34,12 @@ void GameManager::input() {
     scene.input();
 }
 
+void GameManager::update(const core::Seconds dt) {
+    core::IScene& scene = m_routerService->currentScene();
+
+    scene.update(dt);
+}
+
 void GameManager::onExit() {
     if (!m_routerService->hasPendingStateChange()) {
         return;

@@ -29,6 +29,7 @@ public:
     void onEnter() override;
     void render() override;
     void input() override;
+    void update(core::Seconds dt) override;
     void onExit() override;
 
     [[nodiscard]] bool shouldExit() const override;

@@ -1,6 +1,6 @@
 # 14 — Tempo no loop: `update(dt)` separado de `render()`
 
-- **Status:** todo
+- **Status:** done ✅ (opção B, 2026-07-08, branch `feature/14-time-in-the-loop`)
 - **Prioridade:** 🔴 Alta (arquitetural — a maior lacuna do core)
 - **Categoria:** Arquitetura / core
 - **Depende de:** 12 e 13 (ciclo 0.2.0 fechado; portas estáveis)
@@ -175,15 +175,47 @@ B + `render(alpha)` com estado anterior/atual interpolado.
 
 ## Critérios de aceite
 
-- [ ] `EngineManager::run()` mede tempo com relógio monotônico e executa
+- [x] `EngineManager::run()` mede tempo com relógio monotônico e executa
       `update(dt)` em passos fixos (acumulador + clamp anti-espiral).
-- [ ] `dt` tipado com `std::chrono` na API pública (nada de `double` cru).
-- [ ] Ordem do frame coberta por teste de call-log, incluindo os casos
+- [x] `dt` tipado com `std::chrono` na API pública (nada de `double` cru).
+- [x] Ordem do frame coberta por teste de call-log, incluindo os casos
       "0 updates" e "N updates com dt idêntico".
-- [ ] Fonte de tempo injetável (testes não dependem de sleep/tempo real).
-- [ ] `kFixedDt` configurável na construção; defaults documentados.
-- [ ] Portas atualizadas com Doxygen do novo contrato; ADR 0001 anotado.
-- [ ] Suíte verde (CI 3 jobs, incluindo ASan).
+- [x] Fonte de tempo injetável (testes não dependem de sleep/tempo real).
+- [x] `kFixedDt` configurável na construção; defaults documentados.
+- [x] Portas atualizadas com Doxygen do novo contrato; ADR 0001 anotado.
+- [x] Suíte verde (CI 3 jobs, incluindo ASan).
+
+## Resultado da execução
+
+Executada a **opção B** (fixed timestep com acumulador), com as decisões de
+design da seção anterior:
+
+- **`core/Time.hpp`** novo: `using Seconds = std::chrono::duration<double>;`.
+- **`IScene::update(Seconds)`** e **`IGameManager::update(Seconds)`** novos
+  (Doxygen com o contrato "0..N chamadas por quadro, mesmo dt");
+  `routing::GameManager::update` delega à cena atual.
+- **`EngineManager`**: construtor ganhou `fixedDt` (default `kDefaultFixedDt`
+  = 1/60 s), `maxFrameTime` (default 250 ms) e `clockNow` injetável (default
+  `steady_clock::now` — `std::function<TimePoint()>`, a forma mais barata).
+  Configuração não-positiva lança `std::invalid_argument` (um `fixedDt <= 0`
+  travaria o loop interno). `run()` implementa acumulador + teto anti-espiral.
+- **Testes (35/35)** — 6 novos:
+  - unidade: quadro longo → N updates com o MESMO dt; quadro curto → 0 updates
+    (render acontece mesmo assim); clamp do frameTime; construção inválida
+    lança; `GameManager::update` repassa o dt à cena.
+  - integração (call-log): o acumulador carrega o resto entre quadros
+    (25 ms/quadro com passo de 10 ms → 2 updates no quadro 1, 3 no quadro 2),
+    na ordem `input → update* → render`.
+  - Os fixtures existentes injetam relógio congelado (frameTime = 0) — os
+    call-logs antigos continuam válidos e determinísticos.
+- README (seção "The frame and time") e ADR 0001 (nota resolvida) atualizados.
+
+## Pendências fora do escopo (atualizado na execução)
+
+- **8Puzzle** (ao consumir a 0.3.0): cenas ganham `update(Seconds) {}`;
+  oportunidade: cronômetro de partida no `GameScene` via dt.
+- Throttling/cap de FPS (sleep/vsync) — decisão de plataforma, task futura.
+- Interpolação de render (opção C) — quando houver consumidor gráfico.
 
 ## Riscos
 

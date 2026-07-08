@@ -40,6 +40,7 @@ public:
     std::vector<std::string> callLog;
     int runCount = 0;
     int maxRuns = 1;
+    cengine::core::Seconds lastDt{0};
 
     void onEnter() override {
         runCount++;
@@ -52,6 +53,11 @@ public:
 
     void input() override {
         callLog.push_back("input");
+    }
+
+    void update(cengine::core::Seconds dt) override {
+        callLog.push_back("update");
+        lastDt = dt;
     }
 
     void onExit() override {

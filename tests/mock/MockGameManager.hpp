@@ -10,6 +10,7 @@ public:
     MOCK_METHOD(void, onEnter, (), (override));
     MOCK_METHOD(void, render, (), (override));
     MOCK_METHOD(void, input, (), (override));
+    MOCK_METHOD(void, update, (cengine::core::Seconds), (override));
     MOCK_METHOD(void, onExit, (), (override));
     MOCK_METHOD(void, cleanup, (), (override));
 

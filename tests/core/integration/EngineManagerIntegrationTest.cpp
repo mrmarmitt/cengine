@@ -30,10 +30,15 @@ protected:
         m_rawWindowManager = m_fakeWindowManager.get();
         m_rawGameManager = m_fakeGameManager.get();
 
-        // Inicializa o EngineManager com as implementações "fake"
+        // Inicializa o EngineManager com as implementações "fake" e relógio
+        // CONGELADO (frameTime = 0 -> nenhum passo de update); a contagem de
+        // passos é coberta pelo teste de fixed timestep abaixo.
         m_engineManager = std::make_unique<EngineManager>(
             std::move(m_fakeWindowManager),
-            std::move(m_fakeGameManager)
+            std::move(m_fakeGameManager),
+            EngineManager::kDefaultFixedDt,
+            EngineManager::kDefaultMaxFrameTime,
+            [] { return EngineManager::TimePoint{}; }
         );
     }
 };
@@ -89,4 +94,38 @@ TEST_F(EngineManagerIntegrationTest, Start_ExecutesLoopCorrectlyForMultipleItera
     ASSERT_EQ(m_rawGameManager->callLog[6], "render");
     ASSERT_EQ(m_rawGameManager->callLog[7], "onExit");
     ASSERT_EQ(m_rawGameManager->callLog[8], "cleanup");
+}
+
+// Fixed timestep de ponta a ponta (task 14): com relógio que avança 25 ms por
+// quadro e passo fixo de 10 ms, o quadro 1 consome 2 passos (sobram 5 ms) e o
+// quadro 2 consome 3 (5 + 25 = 30 ms) — na ordem input -> update* -> render.
+TEST(EngineManagerFixedTimestepIntegrationTest, AccumulatorCarriesRemainderAcrossFrames) {
+    auto fakeWindowManager = std::make_unique<FakeWindowManager>();
+    auto fakeGameManager = std::make_unique<FakeGameManager>();
+    FakeGameManager* rawGameManager = fakeGameManager.get();
+    rawGameManager->maxRuns = 2;
+
+    constexpr Seconds kFixedDt{0.010};
+    auto now = std::make_shared<EngineManager::TimePoint>();
+
+    EngineManager engineManager{
+        std::move(fakeWindowManager),
+        std::move(fakeGameManager),
+        kFixedDt,
+        EngineManager::kDefaultMaxFrameTime,
+        [now] {
+            *now += std::chrono::milliseconds{25};
+            return *now;
+        }};
+
+    engineManager.start();
+
+    const std::vector<std::string> expected{
+        "onEnter", "input", "update", "update", "render", "onExit",                // quadro 1: 25 ms -> 2 passos
+        "onEnter", "input", "update", "update", "update", "render", "onExit",     // quadro 2: 5 + 25 ms -> 3 passos
+        "cleanup"};
+    ASSERT_EQ(rawGameManager->callLog, expected);
+
+    // Todos os passos usam o MESMO dt fixo.
+    ASSERT_EQ(rawGameManager->lastDt, kFixedDt);
 }

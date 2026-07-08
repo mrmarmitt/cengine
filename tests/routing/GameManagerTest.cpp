@@ -71,6 +71,15 @@ TEST_F(GameManagerTest, OnEnter_AfterCommittedNavigation_ReentersEvenWithSameSta
     m_gameManager->onEnter();
 }
 
+TEST_F(GameManagerTest, Update_ForwardsFixedDtToCurrentScene) {
+    constexpr cengine::core::Seconds dt{1.0 / 60.0};
+
+    EXPECT_CALL(*m_mockRouter, currentScene()).WillOnce(testing::ReturnRef(m_mockScene));
+    EXPECT_CALL(m_mockScene, update(dt)).Times(1);
+
+    m_gameManager->update(dt);
+}
+
 TEST_F(GameManagerTest, Render_CallsDrawOnCurrentScene) {
     EXPECT_CALL(*m_mockRouter, currentScene()).WillOnce(testing::ReturnRef(m_mockScene));
     EXPECT_CALL(m_mockScene, draw()).Times(1);

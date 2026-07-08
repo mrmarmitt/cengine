@@ -116,10 +116,11 @@ Nenhum se aplica hoje → monorepo, **projetado para ser extraível**.
 ## Notas de implementação
 
 - **Física tem uma sutileza:** costuma exigir *fixed timestep* (separar
-  `update(dt)` de `render()`). Hoje o loop (`EngineManager::run()`) não tem
-  conceito de tempo/`dt`. Física pode, portanto, forçar o **core a evoluir o
-  contrato do loop** — diferente de roteamento, que não toca no core. Não
-  resolver agora, mas não fechar o design do loop de um jeito que impeça isso.
+  `update(dt)` de `render()`). ~~Hoje o loop (`EngineManager::run()`) não tem
+  conceito de tempo/`dt`.~~ **Resolvido na
+  [Tarefa 14](../task/14-time-in-the-loop.md)**: o loop mede tempo com relógio
+  monotônico e executa `update(dt)` em passos fixos (acumulador + teto
+  anti-espiral) — o contrato que um futuro `cengine::physics` consome.
 - `IState` (máquina de estados) é considerado conceito de **roteamento**, não de
   core — vai para `cengine::routing`.
 

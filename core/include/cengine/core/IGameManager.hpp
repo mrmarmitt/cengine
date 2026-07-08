@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cengine/core/Time.hpp>
+
 namespace cengine::core {
 
 /**
@@ -10,8 +12,9 @@ namespace cengine::core {
  * implementação `cengine::routing::GameManager`, que delega para o roteador).
  *
  * Os métodos abaixo são chamados a cada iteração do loop, na ordem:
- * `onEnter()` → `input()` → `render()` → `onExit()`, e por fim `shouldExit()`
- * decide se o loop continua. `cleanup()` roda uma vez, ao encerrar.
+ * `onEnter()` → `input()` → `update(dt)` (0..N vezes, passo fixo) →
+ * `render()` → `onExit()`, e por fim `shouldExit()` decide se o loop
+ * continua. `cleanup()` roda uma vez, ao encerrar.
  */
 class IGameManager {
 public:
@@ -27,6 +30,10 @@ public:
 
     /// Processa a entrada do usuário na cena atual.
     virtual void input() = 0;
+
+    /// Avança a simulação em @p dt. Contrato de *fixed timestep*: o loop chama
+    /// 0..N vezes por iteração, sempre com o MESMO dt (ver EngineManager).
+    virtual void update(Seconds dt) = 0;
 
     /// Trata a saída da cena atual e efetiva uma eventual troca de estado.
     virtual void onExit() = 0;

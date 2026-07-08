@@ -140,6 +140,15 @@ the switch is committed at the end of the frame (`onExit`). Requesting the
 and re-entered). Routing to the `cengine::routing::kExitStateCode` state stops
 the loop.
 
+### The frame and time
+
+Each frame runs `input()` → `update(dt)` → `draw()` on the active scene. The
+loop uses a **fixed timestep** ("fix your timestep"): frame time is measured
+with a monotonic clock and consumed in constant `dt` steps — `update` runs
+**0..N times per frame, always with the same `dt`** (default 1/60 s,
+configurable in the `EngineManager` constructor). Put simulation (animations,
+timers, physics) in `update(dt)`; never measure time inside a scene.
+
 The public headers carry Doxygen comments describing each contract — start from
 [`IScene`](core/include/cengine/core/IScene.hpp) and
 [`IGameManager`](core/include/cengine/core/IGameManager.hpp).
