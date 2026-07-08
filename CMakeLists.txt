@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-project(cengine VERSION 0.1.0 LANGUAGES CXX)
+project(cengine VERSION 0.2.0 LANGUAGES CXX)
 
 # Define padrão do projeto
 set(CMAKE_CXX_STANDARD 23)
