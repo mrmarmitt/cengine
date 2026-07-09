@@ -5,6 +5,40 @@ All notable changes to CEngine are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-09
+
+Hosted loop mode (task 15 of the [improvement plan](.ai/task/README.md)):
+frameworks with inversion of control (The-Forge's `IApp`, editors, browsers)
+own the loop and cannot call the blocking `start()` — they now drive the
+engine with `frame(dt)`, one call per frame, keeping every fixed-timestep
+guarantee from 0.3.0. Design validated against a real host (phase 1 of the
+8Puzzle The-Forge PoC).
+
+**Non-breaking release** — purely additive; no consumer changes required.
+
+### Added
+
+- **`EngineManager::frame(Seconds frameTime)`**: runs ONE complete frame
+  (`onEnter` → `input` → `update(fixedDt)` 0..N times → `render` → `onExit`)
+  consuming the host-measured `frameTime` in the internal fixed-timestep
+  accumulator (now a member — the remainder persists across calls). Returns
+  `false` when the game routed to the exit state; shutdown is the host's
+  decision, and the host calls `cleanup()` on its teardown.
+- **Hosted-mode tests** (6): phase order, short frame (0 updates, render still
+  runs), accumulator persisting across `frame()` calls, `maxFrameTime` clamp,
+  exit condition, `cleanup()` without a window manager.
+- **README section** on hosted mode with the per-frame callback recipe.
+
+### Changed
+
+- **`run()` is now a consumer of `frame()`** — both modes share the exact same
+  frame logic; the existing call-log suite passes unchanged.
+- **`windowManager == nullptr` is supported** (hosted mode has no engine
+  window: the host owns window, message pump and pacing). `run()` gained the
+  missing null guard; `frame()` never touches the window by design.
+- `maxFrameTime` clamping composes harmlessly with a host-side `dt` clamp
+  (documented); the injectable clock is not consulted in hosted mode.
+
 ## [0.3.0] - 2026-07-08
 
 Time in the loop (task 14 of the [improvement plan](.ai/task/README.md)): the

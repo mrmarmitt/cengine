@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.23)
+﻿cmake_minimum_required(VERSION 3.23)
 
-project(cengine VERSION 0.3.0 LANGUAGES CXX)
+project(cengine VERSION 0.4.0 LANGUAGES CXX)
 
-# Define padrão do projeto
+# Define padrÃ£o do projeto
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,13 +11,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 enable_testing()
 
 # -------------------------------------------------------------
-# Opções de build (módulos opt-in — ver ADR 0001)
+# OpÃ§Ãµes de build (mÃ³dulos opt-in â€” ver ADR 0001)
 # -------------------------------------------------------------
 option(CENGINE_BUILD_ROUTING "Build the optional routing module (cengine::routing)" ON)
 option(CENGINE_BUILD_TESTS   "Build the test suite" ON)
 
 # -------------------------------------------------------------
-# Core (sempre) + módulos opcionais
+# Core (sempre) + mÃ³dulos opcionais
 # -------------------------------------------------------------
 add_subdirectory(core)
 
