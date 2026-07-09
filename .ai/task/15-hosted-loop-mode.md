@@ -1,8 +1,7 @@
 # 15 — Modo hospedado: dirigir o loop da engine de fora (`frame(dt)`)
 
-- **Status:** in-progress (2026-07-09 — engine pronta: `frame()` + `run()`
-  sobre ele + testes + docs; falta migrar o adaptador do 8Puzzle, após o
-  release)
+- **Status:** done (2026-07-09 — release 0.4.0; adaptador `8PuzzleForge`
+  migrado para `frame(dt)` e validado em runtime)
 - **Prioridade:** 🟡 Média
 - **Categoria:** Arquitetura / core
 - **Depende de:** 14 (tempo no loop) ✅; PoC The-Forge fase 1 ✅ (8Puzzle,
@@ -150,9 +149,11 @@ questões abertas e revelou uma nova. Decisões:
 - [x] Testes do modo hospedado (6 novos): fases em ordem, 0 updates com
       render, acumulador persistindo ENTRE frames, clamp, retorno false na
       saída, cleanup sem janela.
-- [ ] Adaptador The-Forge (8Puzzle) consumindo `frame()` — nenhuma lógica de
-      fase/acumulador duplicada fora da engine.
-- [ ] Suíte verde (CI 3 jobs).
+- [x] Adaptador The-Forge (8Puzzle) consumindo `frame()` — nenhuma lógica de
+      fase/acumulador duplicada fora da engine (8puzzle commit 7f00334: o
+      `Update()` só captura input/dt, o `Draw()` chama `frame(dt)`; o jogo
+      ganhou fixed timestep de verdade no The-Forge, validado em runtime).
+- [x] Suíte verde (CI nos PRs #16/#17; 41/41 local).
 
 ## Riscos
 

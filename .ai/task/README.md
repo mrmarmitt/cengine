@@ -33,8 +33,8 @@ segurança barata** e **separando "mover" de "redesenhar"**.
    futuro `cengine::physics` (ADR 0001). *Breaking* nas portas
    `IGameManager`/`IScene` — âncora do bump 0.3.0. ✅ (release 0.3.0 publicado)
 9. **Ciclo 0.4.0 — modo hospedado (15):** `frame(dt)` para hosts com inversão
-   de controle (The-Forge). **Aguarda a fase 1 da PoC The-Forge no 8Puzzle**
-   validar o formato do host — não implementar por especulação.
+   de controle (The-Forge). Desenho validado pela fase 1 da PoC The-Forge no
+   8Puzzle; adaptador `8PuzzleForge` migrado. ✅ (release 0.4.0 publicado)
 
 > Regra prática: manter a suíte de testes **verde a cada tarefa**. Nenhuma
 > tarefa deve ser mergeada com testes quebrados.
