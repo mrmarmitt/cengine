@@ -73,6 +73,13 @@ No `EngineManager`:
    `present()` vazio numa primeira leva. Mover o `Screen.Print()` do FTXUI
    para o window manager fica como melhoria opcional futura (o sinal de
    desenho segue registrado no Problema).
+3. `present()` DEPOIS do `onExit()` (review do PR #18 questionou lifetime:
+   o commit da rota destrói a cena que rendeu antes do submit). Mantido:
+   cenas são lógica pura e nunca possuem recurso de GPU — tudo que o quadro
+   gravado referencia pertence à plataforma (ponte de desenho/window
+   manager); e o modo hospedado (fase 1, validado no 8PuzzleForge) já
+   apresenta depois de `frame()`/`onExit()` sem problema. O contrato ficou
+   explícito no @note do `present()`.
 
 ## Passos
 

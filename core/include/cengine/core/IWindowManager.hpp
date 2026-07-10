@@ -37,6 +37,14 @@ public:
     /// Chamado toda iteração, depois de `render()`/`onExit()` — inclusive no
     /// último quadro, quando o jogo já pediu saída: o quadro desenhado é
     /// apresentado antes do `cleanup()`.
+    ///
+    /// @note Roda DEPOIS do commit de troca de cena (`onExit()` pode destruir
+    ///       a cena que rendeu o quadro). Por isso o contrato exige que todo
+    ///       recurso referenciado pelo quadro gravado (fontes, buffers,
+    ///       swapchain...) pertença à plataforma — cenas são lógica pura e
+    ///       desenham via ponte da plataforma, nunca possuindo recurso de
+    ///       GPU. Mesma ordem do modo hospedado, em que o host apresenta
+    ///       depois de `frame()` retornar.
     virtual void present() = 0;
 
     /// Destrói a janela e libera recursos gráficos. Chamado uma vez, ao sair.
