@@ -52,10 +52,12 @@ TEST_F(EngineManagerIntegrationTest, Start_ExecutesFullLifecycle) {
     m_engineManager->start();
 
     // Verificamos o log de chamadas para garantir que a sequência foi a correta.
-    ASSERT_EQ(m_rawWindowManager->callLog.size(), 3);
+    // present() fecha o quadro depois das fases — mesmo no último (saída).
+    ASSERT_EQ(m_rawWindowManager->callLog.size(), 4);
     ASSERT_EQ(m_rawWindowManager->callLog[0], "init");
     ASSERT_EQ(m_rawWindowManager->callLog[1], "update");
-    ASSERT_EQ(m_rawWindowManager->callLog[2], "cleanup");
+    ASSERT_EQ(m_rawWindowManager->callLog[2], "present");
+    ASSERT_EQ(m_rawWindowManager->callLog[3], "cleanup");
 
     ASSERT_EQ(m_rawGameManager->callLog.size(), 5);
     ASSERT_EQ(m_rawGameManager->callLog[0], "onEnter");
@@ -75,12 +77,15 @@ TEST_F(EngineManagerIntegrationTest, Start_ExecutesLoopCorrectlyForMultipleItera
     // Executa o método start() do EngineManager, que contém o loop de execução.
     m_engineManager->start();
 
-    // O log do WindowManager terá 'init' uma vez e 'update' duas vezes.
-    ASSERT_EQ(m_rawWindowManager->callLog.size(), 4);
+    // O log do WindowManager terá 'init' uma vez e o par update/present por
+    // quadro (o quadro da janela envolve as fases do jogo).
+    ASSERT_EQ(m_rawWindowManager->callLog.size(), 6);
     ASSERT_EQ(m_rawWindowManager->callLog[0], "init");
     ASSERT_EQ(m_rawWindowManager->callLog[1], "update");
-    ASSERT_EQ(m_rawWindowManager->callLog[2], "update");
-    ASSERT_EQ(m_rawWindowManager->callLog[3], "cleanup");
+    ASSERT_EQ(m_rawWindowManager->callLog[2], "present");
+    ASSERT_EQ(m_rawWindowManager->callLog[3], "update");
+    ASSERT_EQ(m_rawWindowManager->callLog[4], "present");
+    ASSERT_EQ(m_rawWindowManager->callLog[5], "cleanup");
 
     // O log do GameManager terá o ciclo completo de onEnter, input, render, onExit duas vezes,
     // e o cleanup no final.

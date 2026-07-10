@@ -142,8 +142,21 @@ the loop.
 
 ### The frame and time
 
-Each frame runs `input()` → `update(dt)` → `draw()` on the active scene. The
-loop uses a **fixed timestep** ("fix your timestep"): frame time is measured
+Each frame runs `input()` → `update(dt)` → `draw()` on the active scene. In
+engine-owned mode the window's frame *wraps* the game phases, with a symmetric
+begin/end:
+
+```
+window.update()   // OS events, frame setup (acquire image, begin command buffer...)
+game phases       // onEnter -> input -> update(fixedDt) 0..N -> render -> onExit
+window.present()  // close & present the frame (end cmd, submit, queuePresent)
+```
+
+`present()` runs after every frame — including the last one, when the game has
+just routed to the exit state: what was drawn is presented before `cleanup()`.
+Platforms with no present concept (a plain terminal) implement it empty.
+
+The loop uses a **fixed timestep** ("fix your timestep"): frame time is measured
 with a monotonic clock and consumed in constant `dt` steps — `update` runs
 **0..N times per frame, always with the same `dt`** (default 1/60 s,
 configurable in the `EngineManager` constructor). Put simulation (animations,

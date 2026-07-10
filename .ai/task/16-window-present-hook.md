@@ -1,7 +1,8 @@
 # 16 — Fim do quadro na janela: `IWindowManager::present()`
 
-- **Status:** todo (desenho esboçado em 2026-07-09; executar quando a fase 2
-  da PoC The-Forge — task 02 do 8Puzzle — chegar ao degrau 2)
+- **Status:** in-progress (implementação em 2026-07-10 —
+  `feature/16-window-present-hook`; falta release 0.5.0 + migração do
+  8Puzzle + validação no degrau 2)
 - **Prioridade:** 🟡 Média (sobe com a fase 2)
 - **Categoria:** Arquitetura / core
 - **Depende de:** 15 ✅ (modo hospedado). Consumidor real: 8Puzzle task 02
@@ -61,14 +62,24 @@ No `EngineManager`:
   commitada não desenha — o quadro apresentado é o da cena que rendeu).
   Confirmar na execução com os testes de call-log.
 
-## Questões a fechar na execução
+## Questões fechadas na execução (2026-07-10)
 
-1. `present()` deve rodar quando `shouldExit()` já retornou true no mesmo
-   quadro? (Provável: sim — o último quadro desenhado merece aparecer; mas
-   validar com o caso real do The-Forge.)
-2. Migração dos consumidores: terminal (`present()` vazio), FTXUI (mover o
-   `Screen.Print()` do draw das cenas para o window manager, ou manter vazio
-   numa primeira leva — decidir pelo menor diff).
+1. `present()` RODA quando `shouldExit()` retornou true no mesmo quadro —
+   o último quadro desenhado é apresentado antes do `cleanup()`. No run():
+   `update()` → `frame()` → `present()`, sem condicional no retorno.
+   Coberto por teste (call-log e InSequence). Revalidar com o caso real do
+   The-Forge no degrau 2.
+2. Migração dos consumidores pelo MENOR diff: terminal e FTXUI implementam
+   `present()` vazio numa primeira leva. Mover o `Screen.Print()` do FTXUI
+   para o window manager fica como melhoria opcional futura (o sinal de
+   desenho segue registrado no Problema).
+3. `present()` DEPOIS do `onExit()` (review do PR #18 questionou lifetime:
+   o commit da rota destrói a cena que rendeu antes do submit). Mantido:
+   cenas são lógica pura e nunca possuem recurso de GPU — tudo que o quadro
+   gravado referencia pertence à plataforma (ponte de desenho/window
+   manager); e o modo hospedado (fase 1, validado no 8PuzzleForge) já
+   apresenta depois de `frame()`/`onExit()` sem problema. O contrato ficou
+   explícito no @note do `present()`.
 
 ## Passos
 

@@ -26,10 +26,13 @@ namespace cengine::core {
  *   de mensagens e pacing são do host. Ver .ai/task/15.
  *
  * Cada quadro executa: `game.onEnter()` → `game.input()` → `game.update(dt)`
- * (0..N vezes) → `game.render()` → `game.onExit()`. No modo próprio,
- * `window.update()` precede o quadro e `shouldExit()` encerra o loop com
- * `cleanup()`; no modo hospedado, `frame()` devolve false quando o jogo pediu
- * saída e o host decide o shutdown (e chama `cleanup()` no teardown dele).
+ * (0..N vezes) → `game.render()` → `game.onExit()`. No modo próprio o quadro
+ * da janela envolve as fases — `window.update()` antes (eventos de SO,
+ * preparo do quadro) e `window.present()` depois (fechar/apresentar o que foi
+ * desenhado, inclusive no último quadro) — e `shouldExit()` encerra o loop
+ * com `cleanup()`; no modo hospedado, `frame()` devolve false quando o jogo
+ * pediu saída e o host decide o shutdown (e chama `cleanup()` no teardown
+ * dele).
  *
  * ## Tempo (padrão "fix your timestep")
  * O tempo do quadro (medido pelo relógio no modo próprio; informado pelo host

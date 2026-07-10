@@ -69,7 +69,11 @@ TEST_F(EngineManagerTest, Start_InitializesWindowAndRunsLoop) {
     // 3. shouldExit() é chamado para verificar se o loop deve continuar.
     EXPECT_CALL(*m_capturedGameManager, shouldExit()).WillOnce(testing::Return(true));
 
-    // 4. O loop termina e o método cleanup() é chamado.
+    // 4. present() fecha o quadro DEPOIS das fases — inclusive neste último
+    //    quadro, em que o jogo já pediu saída.
+    EXPECT_CALL(*m_capturedWindowManager, present()).Times(1);
+
+    // 5. O loop termina e o método cleanup() é chamado.
     EXPECT_CALL(*m_capturedGameManager, cleanup()).Times(1);
     EXPECT_CALL(*m_capturedWindowManager, cleanup()).Times(1);
 
@@ -120,6 +124,7 @@ protected:
         // Fora do foco destes testes: um quadro só, sem InSequence.
         EXPECT_CALL(*m_windowManager, init()).Times(1);
         EXPECT_CALL(*m_windowManager, update()).Times(1);
+        EXPECT_CALL(*m_windowManager, present()).Times(1);
         EXPECT_CALL(*m_windowManager, cleanup()).Times(1);
         EXPECT_CALL(*m_gameManager, onEnter()).Times(1);
         EXPECT_CALL(*m_gameManager, input()).Times(1);

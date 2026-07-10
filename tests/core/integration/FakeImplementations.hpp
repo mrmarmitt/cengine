@@ -24,6 +24,10 @@ public:
         callLog.push_back("update");
     }
 
+    void present() override {
+        callLog.push_back("present");
+    }
+
     void cleanup() override {
         callLog.push_back("cleanup");
     }

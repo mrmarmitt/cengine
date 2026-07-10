@@ -77,12 +77,18 @@ void EngineManager::run() {
         previous = now;
 
         // A janela é da engine apenas no modo próprio; no hospedado ela é do
-        // host — por isso window.update() fica fora de frame().
+        // host — por isso update()/present() ficam fora de frame(). present()
+        // roda mesmo no último quadro (shouldExit): o que foi desenhado é
+        // apresentado antes do cleanup.
         if (m_windowManager) {
             m_windowManager->update();
         }
 
         m_isRunning = frame(frameTime);
+
+        if (m_windowManager) {
+            m_windowManager->present();
+        }
     }
     cleanup();
 }
