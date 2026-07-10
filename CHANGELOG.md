@@ -5,6 +5,52 @@ All notable changes to CEngine are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-10
+
+Frame-end hook on the window (task 16 of the
+[improvement plan](.ai/task/README.md)): GPU platforms need work AFTER the
+game's `render()` — close the command buffer, submit, present. The
+engine-owned frame gains a symmetric begin/end around the game phases,
+enabling phase 2 of the 8Puzzle The-Forge PoC (cengine owns the loop,
+The-Forge as a library).
+
+> **Breaking release** (small). `IWindowManager` gains a pure virtual
+> `present()` — every window manager must implement it (an empty body is
+> fine for platforms with no present concept). Hosted mode (`frame(dt)`)
+> is untouched.
+
+### Added
+
+- **`IWindowManager::present()`**: end of the frame — close and present what
+  the game phases drew (GPU: endCmd, submit, queuePresent; terminal: print
+  the screen — or empty). Called by `run()` every iteration after
+  `render()`/`onExit()`, including the last frame (what was drawn when the
+  game requested exit is presented before `cleanup()`). The engine-owned
+  frame is now:
+
+  ```
+  window.update()   // OS events, frame setup (acquire, begin cmd...)
+  game phases       // onEnter -> input -> update(fixedDt) 0..N -> render -> onExit
+  window.present()  // close & present the frame
+  ```
+
+- **Documented ownership contract** on `present()`: it runs after the scene
+  switch is committed (`onExit()` may destroy the scene that rendered), so
+  every resource referenced by the recorded frame (fonts, buffers,
+  swapchain...) must belong to the platform — scenes are pure logic and draw
+  through the platform bridge, never owning GPU resources. Same ordering the
+  hosted mode already validates (the host presents after `frame()` returns).
+
+### Migrating from 0.4.0
+
+Add `present()` to your `IWindowManager` implementations. Platforms with no
+frame-end work (plain terminal, or when presentation already happens in the
+scenes' draw) implement it empty:
+
+```cpp
+void present() override {}
+```
+
 ## [0.4.0] - 2026-07-09
 
 Hosted loop mode (task 15 of the [improvement plan](.ai/task/README.md)):
