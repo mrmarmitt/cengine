@@ -79,6 +79,10 @@ Ler antes de executar as tarefas de arquitetura:
 | 14 | [Tempo no loop: `update(dt)` separado de `render()`](14-time-in-the-loop.md) | 🔴 Alta (arq.) | Arquitetura |
 | 15 | [Modo hospedado: dirigir o loop de fora (`frame(dt)`)](15-hosted-loop-mode.md) | 🟡 Média | Arquitetura |
 | 16 | [Fim do quadro na janela: `IWindowManager::present()`](16-window-present-hook.md) | 🟡 Média | Arquitetura |
+| 17 | [Colisão 2D: detecção AABB opt-in](17-collision2d-detection.md) | 🟢 Baixa/Média | Arquitetura |
+| 18 | [Scene stack e overlays](18-scene-stack-overlays.md) | 🟢 Baixa/Média | Arquitetura |
+| 19 | [FlowRouter: extrair a mecânica da fachada de navegação](19-flow-router-facade.md) | 🟢 Baixa (carona) | Arquitetura |
+| 20 | [Vocabulário de input como porta](20-input-vocabulary-port.md) | 🟢 Baixa (estacionada) | Arquitetura |
 
 ## Legenda de status
 
