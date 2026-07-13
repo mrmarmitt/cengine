@@ -50,7 +50,7 @@ segurança barata** e **separando "mover" de "redesenhar"**.
     viva (ADR 0003)** — quem valida o novo desenho é a suíte da cengine e o
     asteroids, que nasce como terceiro consumidor. A task 20 segue
     **estacionada** (gate não disparou — ver ADR 0002).
-    ✅ (implementado com a suíte 49/49 verde; falta commit + tag 0.6.0)
+    ✅ (release 0.6.0 publicado; suíte 49/49 verde)
 
 > Regra prática: manter a suíte de testes **verde a cada tarefa**. Nenhuma
 > tarefa deve ser mergeada com testes quebrados.
