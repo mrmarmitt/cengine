@@ -41,6 +41,14 @@ segurança barata** e **separando "mover" de "redesenhar"**.
     biblioteca). *Breaking* pequeno na interface — âncora do bump 0.5.0.
     ✅ (release 0.5.0 publicado; validado pelo degrau 2 da fase 2 —
     `TheForgeWindowManager` com o quadro de GPU no par `update()`/`present()`)
+11. **Ciclo 0.6.0 (proposto) — janela obrigatória (21) + FlowRouter de
+    carona (19):** remover a hipótese do `nullptr` no `EngineManager`
+    (*breaking*, âncora do bump) e extrair a mecânica da fachada de
+    navegação (opt-in, não-breaking) na mesma visita. Aceite real: migrar
+    os consumidores — 8puzzle (fases 1 e 2) e spaceinvaders (task 02
+    daquele repo, modo próprio) — apagando `nullptr` e a fachada duplicada
+    dos call sites. A task 20 segue **estacionada** (gate não disparou —
+    ver ADR 0002).
 
 > Regra prática: manter a suíte de testes **verde a cada tarefa**. Nenhuma
 > tarefa deve ser mergeada com testes quebrados.
@@ -57,6 +65,10 @@ Ler antes de executar as tarefas de arquitetura:
 - [ADR 0001 — Core mínimo (loop) + módulos opcionais](../decisions/0001-modular-core-vs-modules.md):
   o core é só o game loop + portas; roteamento e física são módulos opt-in no
   mesmo repo. Reformula a tarefa 05 (dividida em 05a/05b) e absorve a 03.
+- [ADR 0002 — Critério de promoção (filtro anti-depósito)](../decisions/0002-criterio-de-promocao-anti-deposito.md):
+  código só entra na engine se for mecanismo puro (sem vocabulário de jogo),
+  com ≥ 2 consumidores reais e testável na própria cengine. Governa as
+  tarefas 17–21 e toda promoção futura.
 
 ## Índice
 
