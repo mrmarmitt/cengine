@@ -1,8 +1,29 @@
 # 20 - Vocabulario de input como porta da cengine
 
-- **Status:** todo
-- **Prioridade:** baixa - ESTACIONADA atras de gate explicito; hoje o
-  desenho "cenas por plataforma" torna a promocao desnecessaria.
+- **Status:** todo - **PRE-REQUISITO DO PROXIMO JOGO** (decisao do dono em
+  2026-07-14, ao encerrar o asteroids). Sai da geladeira: o proximo jogo nasce
+  depois dela, e e ele quem valida a porta como consumidor vivo.
+- **Prioridade:** media (era baixa/estacionada).
+
+## Atualizacao 2026-07-14 — o gate mudou de figura
+
+O gate original ("falta consumidor: cenas sao por plataforma") foi escrito
+quando so existiam os dois jogos hoje CONGELADOS. Desde entao:
+
+- o `enum Key`/`KeyEvent` foi copiado uma quarta vez, agora no
+  `platform-theforge-common` (`ForgeUi.h`), que virou a ponte viva de todos os
+  jogos The-Forge;
+- a **Emenda 1 da ADR 0002** passou a aceitar evidencia de jogo estacionado —
+  entao as copias do 8puzzle e do spaceinvaders CONTAM;
+- o asteroids acrescentou vocabulario novo ao contrato (`Key::Space`, o estado
+  SEGURADO `isHeld`/`heldAxis`), provando que o contrato EVOLUI e que hoje ele
+  evolui em copias, sem dono.
+
+Ou seja: o criterio 2 (>= 2 evidencias) esta folgado, e o criterio 1 (mecanismo
+puro) sempre esteve — `Key`/`KeyEvent` nao tem vocabulario de jogo. O que faltava
+era um consumidor VIVO para validar a porta; e ele agora tem nome: o proximo
+jogo. Cuidar do pedagio da Emenda 1: a suite da cengine deve encarnar o uso dos
+jogos congelados (fila de edges: no maximo um evento por `input()`).
 - **Categoria:** Arquitetura / porta nova
 - **Depende de:** nenhuma task; depende de uma DECISAO de arquitetura
   (cenas compartilhadas entre plataformas) que ainda nao foi tomada.
