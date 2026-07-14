@@ -57,6 +57,17 @@ if(CENGINE_BUILD_COLLISION2D)
 endif()
 
 # -------------------------------------------------------------
+# 3c. Testes do módulo input — só quando o módulo está habilitado
+# -------------------------------------------------------------
+if(CENGINE_BUILD_INPUT)
+  target_sources(cengine_tests
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardTest.cpp"
+  )
+  target_link_libraries(cengine_tests PRIVATE cengine::input)
+endif()
+
+# -------------------------------------------------------------
 # 4. Includes e propriedades
 # -------------------------------------------------------------
 # Permite incluir os mocks como <mock/MockXxx.hpp>

@@ -55,6 +55,7 @@ gated by CMake options:
 |--------|---------|--------|
 | `CENGINE_BUILD_ROUTING` | `ON` | Build `cengine::routing` (scene/state routing) |
 | `CENGINE_BUILD_COLLISION2D` | `ON` | Build `cengine::collision2d` (2D collision **detection**) |
+| `CENGINE_BUILD_INPUT` | `ON` | Build `cengine::input` (keyboard **vocabulary**) |
 | `CENGINE_BUILD_TESTS` | `ON` | Build the test suite |
 
 A consumer links only what it needs:
@@ -64,8 +65,35 @@ target_link_libraries(my_game PRIVATE
     cengine::core         # always
     cengine::routing      # optional
     cengine::collision2d  # optional
+    cengine::input        # optional
 )
 ```
+
+### `cengine::input` — the contract, never the capture
+
+`Key`/`KeyEvent` is the vocabulary the *scenes* speak; `Keyboard` is the
+mechanism between the platform (which pushes) and the scene (which reads):
+
+```cpp
+#include <cengine/input/Keyboard.hpp>
+
+using namespace cengine::input;
+
+// platform (WndProc, terminal, bindings — never the engine's business):
+keyboard.pushKey({ Key::Escape });        // an edge: "the player pressed"
+keyboard.pushHeldKey(Key::Left, true);    // continuous: "it is down right now"
+keyboard.clearHeldKeys();                 // focus lost: the KEYUP never arrives
+
+// scene:
+if (keyboard.readKey().key == Key::Escape) { /* at most ONE event per input() */ }
+paddle.move(keyboard.heldAxis(Key::Left, Key::Right));
+```
+
+The two readings do not substitute for one another. The **edge queue** navigates
+menus and types text — and its one-event-per-`input()` cap is *semantics*: it is
+what stops a repeated key from walking through three menu items in a single
+frame. The **held state** moves things: a ship does not travel on edges, it
+travels while the arrow is down, every frame.
 
 ### `cengine::collision2d` — detection, not physics
 

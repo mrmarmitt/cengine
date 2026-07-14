@@ -90,10 +90,30 @@ Comecar APENAS quando pelo menos um destes for verdade:
 
 ## Criterios de Aceite
 
-- [ ] Gate documentado foi atingido (registrar qual).
-- [ ] Vocabulario unico na cengine, plataformas sem copia local.
-- [ ] Cenas de pelo menos um jogo consumindo a porta.
-- [ ] Nenhuma API de plataforma vazando pela porta.
+- [x] Gate documentado foi atingido: quarta copia do enum (no
+      platform-theforge-common), Emenda 1 da ADR 0002 (evidencia congelada
+      conta) e o contrato EVOLUINDO em copias (Key::Space + estado segurado
+      nascidos no asteroids). Registrado na secao "Atualizacao 2026-07-14".
+- [x] Vocabulario unico na cengine (`cengine::input`, 0.8.0), plataformas sem
+      copia local (o `ForgeUi` do common passa a delegar — common 0.3.0).
+- [x] Nenhuma API de plataforma vazando pela porta (o modulo nao inclui nada
+      de janela/GPU/terminal; a captura fica 100% na plataforma).
+- [ ] Cenas de pelo menos um jogo consumindo a porta: **breakout** (o proximo
+      jogo) — fecha quando o casco dele subir. O asteroids ja consome
+      indiretamente, via o ForgeUi que agora delega.
+
+## Pedagio da Emenda 1 (ADR 0002)
+
+Das quatro copias que justificaram a promocao, duas vivem em jogos
+ESTACIONADOS. A suite da cengine encarna o uso deles, com a origem citada:
+
+- **8puzzle** (`src/platform/ftxui/Keyboard.h`): navegacao de menu — tres
+  teclas, TRES quadros (o contrato da fila).
+- **spaceinvaders** (`@bb4e9b1`, `ForgeUi.h:62-76`): o par ja mastigado
+  `pushHeldState(moveAxis, fireHeld)` do canhao, mostrado como EXPRESSAVEL pelo
+  mecanismo generico por tecla — se nao fosse, a promocao estaria errada.
+- **asteroids** (vivo): dois eixos + gatilho segurado + o nome do recorde
+  digitado pela fila. E a prova de que o contrato evolui.
 
 ## Riscos
 

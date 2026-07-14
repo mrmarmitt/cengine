@@ -5,6 +5,50 @@ All notable changes to CEngine are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-07-14
+
+The keyboard **contract** becomes an opt-in module (task 20). The **capture**
+never will.
+
+> **Not a breaking release.** `cengine::input` is a new opt-in module; it depends
+> on neither `core` nor `routing` and changes neither.
+
+### Added
+
+- **`cengine::input`** (`CENGINE_BUILD_INPUT`, default `ON`):
+  - `Key` / `KeyEvent` — the vocabulary the *scenes* speak. No scancodes, no
+    virtual keys, no terminal events: translating the real keyboard is the
+    platform's job and never enters the engine.
+  - `Keyboard` — the mechanism the games had been copying into every bridge,
+    with its **two readings**, which do not substitute for one another:
+    - the **edge queue** (`pushKey` / `readKey`): *the player pressed*. At most
+      **one event per `input()`** — that cap is semantics, not detail: it is what
+      stops a repeated key from walking through three menu items in one frame.
+    - the **held state** (`pushHeldKey` / `isHeld` / `heldAxis`): *the key is
+      down right now*. A ship does not move on edges; it moves while the arrow
+      is held, every frame.
+  - `clearHeldKeys()` for focus loss — without it the KEYUP never arrives and
+    the ship flies away on its own when the window comes back.
+
+### Why now (the gate)
+
+Task 20 had been parked behind an explicit gate ("scenes are per-platform, so a
+shared vocabulary buys nothing"). Three things changed:
+
+- the `Key` enum got copied a **fourth** time, into `platform-theforge-common` —
+  the bridge that is now shared by every The-Forge game;
+- ADR 0002's Amendment 1 made **frozen games count as evidence**, so the 8puzzle
+  and Space Invaders copies do count;
+- Asteroids **grew the contract** (`Key::Space`, the held state itself), proving
+  that it evolves — and that today it evolves in copies, with no owner.
+
+Per Amendment 1's toll, the suite embodies the frozen consumers' cases, with
+their origins cited: the 8puzzle's menu navigation (`src/platform/ftxui/
+Keyboard.h`, three keys → three frames) and the Space Invaders cannon
+(`spaceinvaders@bb4e9b1`, `ForgeUi.h:62-76`), whose pre-chewed
+`pushHeldState(moveAxis, fireHeld)` pair is shown to be expressible by the
+generic per-key mechanism — if it weren't, the promotion would be wrong.
+
 ## [0.7.1] - 2026-07-14
 
 Provenance in the tests. No API change — `collision2d` is byte-for-byte the same
