@@ -1,6 +1,7 @@
 # 17 - Colisao 2D: deteccao AABB opt-in
 
-- **Status:** todo
+- **Status:** estacionada - gate avaliado e REPROVADO em 2026-07-14 (ver
+  "Avaliacao do gate"); novo gate definido no fim desta task.
 - **Prioridade:** baixa/media - so deve subir quando houver repeticao real em
   mais de um jogo consumidor.
 - **Categoria:** Arquitetura / modulo opcional
@@ -8,6 +9,34 @@
   candidato: Space Invaders, depois de fechar a PoC do jogo.
 - **Breaking:** nao na primeira versao, se entrar como modulo novo opt-in
   (`cengine::collision2d`) sem alterar `core` ou `routing`.
+
+## Avaliacao do gate (2026-07-14) - o asteroids disparou, e reprovou
+
+O criterio de comeco "um segundo jogo precisar da mesma logica AABB" disparou
+quando o asteroids chegou na colisao (task 03 daquele repo). Avaliado contra a
+ADR 0002, o candidato **reprova no criterio 2 (>= 2 consumidores reais)**, por
+dois motivos que so ficaram visiveis com o consumidor na mao:
+
+1. **O consumidor que justificava a promocao nao existe mais como consumidor.**
+   O spaceinvaders tem colisao AABB, mas esta ESTACIONADO na 0.5.0 (ADR 0003):
+   ele nunca vai linkar `cengine::collision2d`. A evidencia dele e historica,
+   nao viva. Promover agora produz um modulo com UM consumidor real.
+2. **A forma que o asteroids precisa nao e a que o SI evidencia.** Rocha e nave
+   sao redondas: o asteroids pede **circulo x circulo** (e com distancia
+   TOROIDAL, porque a arena da wrap). AABB em corpos que giram erra de forma
+   visivel. Ou seja: o AABB evidenciado pelo SI nao serve ao asteroids, e o
+   circulo que o asteroids quer tem ZERO evidencia previa — promove-lo seria
+   exatamente a especulacao que a ADR 0002 proibe.
+
+**Decisao:** a colisao (circulo, toroidal) fica no `ast::World`, no dominio do
+asteroids. Nenhuma linha sobe para a engine neste ciclo. Custo aceito: quando
+a promocao acontecer, havera duplicacao entre um jogo vivo e um congelado — o
+que a ADR 0002 ja declara preferivel a uma abstracao sem consumidor.
+
+**Novo gate (substitui os "Criterios Para Comecar" abaixo):** comecar quando um
+**segundo jogo VIVO** (nao estacionado) precisar de deteccao 2D. Ai havera duas
+formas reais na mesa (AABB e circulo) e a pergunta certa a responder deixa de
+ser "AABB ou circulo?" e passa a ser "qual a forma minima que serve aos dois?".
 
 ## Contexto
 
