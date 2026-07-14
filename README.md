@@ -54,16 +54,49 @@ gated by CMake options:
 | Option | Default | Effect |
 |--------|---------|--------|
 | `CENGINE_BUILD_ROUTING` | `ON` | Build `cengine::routing` (scene/state routing) |
+| `CENGINE_BUILD_COLLISION2D` | `ON` | Build `cengine::collision2d` (2D collision **detection**) |
 | `CENGINE_BUILD_TESTS` | `ON` | Build the test suite |
 
 A consumer links only what it needs:
 
 ```cmake
 target_link_libraries(my_game PRIVATE
-    cengine::core        # always
-    cengine::routing     # optional
+    cengine::core         # always
+    cengine::routing      # optional
+    cengine::collision2d  # optional
 )
 ```
+
+### `cengine::collision2d` — detection, not physics
+
+The module answers exactly one question — *do these two shapes touch?* — over
+`Aabb`, `Circle` and the mixed pair:
+
+```cpp
+#include <cengine/collision2d/Intersects.hpp>
+
+using namespace cengine::collision2d;
+
+if (intersects(Circle{ shipPos, shipRadius }, Circle{ rockPos, rockRadius }))
+{
+    // The GAME decides what a hit means: score, lose a life, split the rock,
+    // end the run. The engine never owns entities and never resolves anything.
+}
+```
+
+What the module deliberately does **not** know:
+
+- **the shape of the world.** A wrapping arena (a torus) is *game* policy: the
+  consumer computes the shortest delta in its own topology and asks the engine
+  with an already-corrected position. A game whose arena does not wrap just asks
+  directly.
+- **the axis convention.** Y-up or Y-down makes no difference to an overlap.
+- **units.** Pixels, cells or arena units are the game's business.
+
+That line — mechanism in the engine, policy in the game — is
+[ADR 0002](.ai/decisions/0002-criterio-de-promocao-anti-deposito.md); the module's
+test suite carries the two real cases that justified it (Space Invaders' AABB
+and Asteroids' circle).
 
 ## Usage
 

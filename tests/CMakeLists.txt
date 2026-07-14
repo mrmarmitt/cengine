@@ -46,6 +46,17 @@ if(CENGINE_BUILD_ROUTING)
 endif()
 
 # -------------------------------------------------------------
+# 3b. Testes do módulo collision2d — só quando o módulo está habilitado
+# -------------------------------------------------------------
+if(CENGINE_BUILD_COLLISION2D)
+  target_sources(cengine_tests
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/collision2d/IntersectsTest.cpp"
+  )
+  target_link_libraries(cengine_tests PRIVATE cengine::collision2d)
+endif()
+
+# -------------------------------------------------------------
 # 4. Includes e propriedades
 # -------------------------------------------------------------
 # Permite incluir os mocks como <mock/MockXxx.hpp>

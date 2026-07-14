@@ -5,6 +5,52 @@ All notable changes to CEngine are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-07-14
+
+2D collision **detection** as an opt-in module (task 17), and the promotion rule
+that let it in (ADR 0002, Amendment 1).
+
+> **Not a breaking release.** `cengine::collision2d` is a new opt-in module; it
+> does not depend on `core` or `routing` and changes neither. Consumers that
+> don't link it are unaffected.
+
+### Added
+
+- **`cengine::collision2d`** (`CENGINE_BUILD_COLLISION2D`, default `ON`) — pure
+  geometry, no dependency on `core` or `routing`:
+  - `Aabb`, `Circle`, `Vec2`;
+  - `intersects(Aabb, Aabb)`, `intersects(Circle, Circle)`,
+    `intersects(Circle, Aabb)` and the symmetric overload.
+  - Edge contract, documented in the header: **touching boxes do not
+    intersect** (zero overlap area), **tangent circles do** (a shot must not
+    graze a rock without hitting it). Circle × box uses the true distance to the
+    closest point on the box, so a circle near a corner does not falsely hit.
+  - The engine **detects**; the game still owns entities, decides what a hit
+    means, scores, kills and ends the run.
+  - **The world's shape is not the engine's business.** A wrapping arena is game
+    policy: the consumer computes the shortest delta in its own topology and
+    asks with an already-corrected position (Asteroids' torus does exactly this;
+    Space Invaders, whose arena doesn't wrap, asks directly).
+
+### Changed
+
+- **ADR 0002 — Amendment 1: a parked game still counts as evidence.** Criterion
+  2 ("≥ 2 real consumers") was being read as "≥ 2 consumers that will *link* the
+  module". Since both finished games are parked at 0.5.0 (ADR 0003), that reading
+  would veto every future promotion — and would turn "living documentation" into
+  plain abandonment. Freezing a repository suspends its *maintenance*, not the
+  *learning* it produced. The criterion now measures **evidence of need**.
+  - **The toll:** a promotion backed by frozen evidence must have the engine's
+    own suite **embody the frozen consumer's use case** — `collision2d`'s tests
+    reproduce Space Invaders' shot × invader and bomb × cannon over the module,
+    proving the mechanism expresses that game's real situation without
+    unfreezing it. If the module ever stops serving those tests, it has stopped
+    serving the learning that justified it.
+  - The amendment does **not** loosen criterion 1: mechanism × policy is still
+    cut by concept. Shapes go up; the arena's topology stays in the game.
+- `project(cengine VERSION ...)` now tracks the release (it had been left at
+  `0.5.0` through the 0.6.0 cycle).
+
 ## [0.6.0] - 2026-07-13
 
 Explicit construction modes (tasks 21 and 19 of the

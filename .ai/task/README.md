@@ -69,8 +69,12 @@ Ler antes de executar as tarefas de arquitetura:
   mesmo repo. Reformula a tarefa 05 (dividida em 05a/05b) e absorve a 03.
 - [ADR 0002 — Critério de promoção (filtro anti-depósito)](../decisions/0002-criterio-de-promocao-anti-deposito.md):
   código só entra na engine se for mecanismo puro (sem vocabulário de jogo),
-  com ≥ 2 consumidores reais e testável na própria cengine. Governa as
-  tarefas 17–21 e toda promoção futura.
+  com ≥ 2 **evidências reais** de necessidade e testável na própria cengine.
+  Governa as tarefas 17–21 e toda promoção futura.
+  **Emenda 1 (2026-07-14):** um jogo estacionado continua valendo como
+  evidência — congelar suspende a manutenção, não o aprendizado. O pedágio é
+  que a suíte da engine precisa **encarnar o caso de uso do jogo congelado**
+  (foi o que destravou a tarefa 17).
 - [ADR 0003 — Consumidores estacionados como documentação viva](../decisions/0003-consumidores-estacionados-documentacao-viva.md):
   8puzzle e spaceinvaders ficam pinados na cengine 0.5.0 e saem dos
   critérios de aceite; o asteroids é o consumidor de validação do 0.6.0 em
@@ -97,7 +101,7 @@ Ler antes de executar as tarefas de arquitetura:
 | 14 | [Tempo no loop: `update(dt)` separado de `render()`](14-time-in-the-loop.md) | 🔴 Alta (arq.) | Arquitetura |
 | 15 | [Modo hospedado: dirigir o loop de fora (`frame(dt)`)](15-hosted-loop-mode.md) | 🟡 Média | Arquitetura |
 | 16 | [Fim do quadro na janela: `IWindowManager::present()`](16-window-present-hook.md) | 🟡 Média | Arquitetura |
-| 17 | [Colisão 2D: detecção AABB opt-in](17-collision2d-detection.md) | 🟢 Baixa/Média (estacionada — gate reprovado pelo asteroids em 2026-07-14) | Arquitetura |
+| 17 | [Colisão 2D: detecção opt-in (AABB + círculo)](17-collision2d-detection.md) ✅ 0.7.0 | 🟡 Média | Arquitetura |
 | 18 | [Scene stack e overlays](18-scene-stack-overlays.md) | 🟢 Baixa/Média | Arquitetura |
 | 19 | [FlowRouter: extrair a mecânica da fachada de navegação](19-flow-router-facade.md) ✅ 0.6.0 | 🟢 Baixa (carona) | Arquitetura |
 | 20 | [Vocabulário de input como porta](20-input-vocabulary-port.md) | 🟢 Baixa (estacionada) | Arquitetura |
