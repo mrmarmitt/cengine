@@ -106,6 +106,22 @@ Ler antes de executar as tarefas de arquitetura:
 | 19 | [FlowRouter: extrair a mecânica da fachada de navegação](19-flow-router-facade.md) ✅ 0.6.0 | 🟢 Baixa (carona) | Arquitetura |
 | 20 | [Vocabulário de input como porta](20-input-vocabulary-port.md) ✅ 0.8.0 | 🟡 Média | Arquitetura |
 | 21 | [`IWindowManager` obrigatório: remover a hipótese do `nullptr`](21-window-manager-mandatory.md) ✅ 0.6.0 | 🟡 Média (breaking, 0.6.0) | Arquitetura |
+| 22 | [Colisão 2D: resolução (penetração/MTV)](22-collision2d-resolution.md) | 🟢 Baixa/Média (estacionada — gate avaliado pelo mario-bros: 1 de 2 evidências, e sinal de que resolver é política) | Arquitetura |
+| 23 | [Câmera / viewport (mundo→tela + culling)](23-camera-viewport.md) | 🟢 Baixa (estacionada — candidata registrada; consumidor a nascer no mario degrau 4: 0 de 2 evidências) | Arquitetura |
+
+## Candidatas estacionadas (esperando evidência)
+
+Tasks que **não se implementam ainda**: registram uma candidata a crescer a
+engine para o aprendizado não se perder entre os projetos, com o gate (ADR 0002)
+que precisa disparar antes de começar. Ver [ADR 0002](../decisions/0002-criterio-de-promocao-anti-deposito.md).
+
+- **18 (scene stack/overlays)** — 1/2: breakout ganhou pausa e resolveu com um
+  `bool` local. Espera um 2º consumidor que o `bool` não resolva.
+- **22 (resolução de colisão)** — 1/2: mario resolve eixo-separado; breakout
+  resolve reflexão (`reflectOff`) — formas DIFERENTES, sinal de que resolver é
+  política. Espera um 2º consumidor com o MESMO mecanismo.
+- **23 (câmera/viewport)** — 0/2: a fronteira-título do mario; o consumidor
+  (degrau 4) ainda vai nascer.
 
 ## Legenda de status
 

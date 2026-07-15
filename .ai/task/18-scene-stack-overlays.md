@@ -45,6 +45,14 @@ aparecer o caso que o breakout NAO tem:
 Enquanto o caso for "pausa que congela o jogo", ele nao paga uma abstracao nova.
 
 **Evidencia 1/2 registrada:** breakout, `ForgeGameScene::m_paused`.
+
+**Avaliacao 2026-07-15 (mario-bros degrau 2) — NAO conta como evidencia 2.** O
+mario ganhou um HUD de debug (pos/vel/no-chao) para validar a colisao a olho. Ele
+e **texto DENTRO da `ForgeGameScene::draw()`**, nao uma camada empilhada: nao
+precisa que uma cena de baixo continue rodando (E a propria cena), nao sobrevive
+a troca de cena, nao empilha nada. E ainda menos que o `bool` do breakout —
+reforca o gate em vez de disparar. Segue **1/2**. O caso que a task 18 espera
+(overlay que compoe/sobrevive como camada separada) ainda nao apareceu.
 - **Categoria:** Arquitetura / routing
 - **Depende de:** 13 done (Router x Repository separados), 15 done (modo
   hospedado) e 16 done (present no fim do quadro).
