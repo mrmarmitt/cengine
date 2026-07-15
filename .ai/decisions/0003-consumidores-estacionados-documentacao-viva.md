@@ -49,6 +49,21 @@ validação do 0.6.0 em diante.
 - Reverter é barato: migrar um jogo estacionado é seguir o "Migrating from
   0.5.0" do CHANGELOG.
 
+## Emenda 1 — congelamento admite migração de infraestrutura (2026-07-15)
+
+"Estacionado" suspende a **evolução do código** (features, correções, bump da
+engine), não o **endereço** do repositório. Quando os repos foram transferidos
+de `github.com/mrmarmitt` para a organização `github.com/cengine-dev`, os jogos
+congelados receberam um commit `chore:` atualizando as URLs internas (o
+`GIT_REPOSITORY` do FetchContent e os links de README). Isso **não fere** esta
+ADR: é migração de infraestrutura, não retomada de manutenção — nenhuma linha de
+lógica de jogo, nenhum bump de versão da cengine mudou.
+
+Regra: um jogo estacionado pode receber commits que **não alterem seu
+comportamento nem sua versão pinada da engine** — migração de host/org, correção
+de link quebrado, ajuste de `.gitignore`. Qualquer mudança que toque a lógica do
+jogo ou o pin da engine continua vedada e exigiria descongelar explicitamente.
+
 ## Relacionado
 
 - Tasks 21 e 19 — o ciclo 0.6.0 que motivou a decisão.
