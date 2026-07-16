@@ -1,8 +1,10 @@
 # 24 - Audio como porta (`play(id)`), backend na plataforma
 
-- **Status:** estacionada - 1 de 2 evidencias (breakout). O proprio breakout
-  (task 06) ja anteviu o desenho. Nao implementar ate um 2o consumidor.
-- **Prioridade:** baixa - conforto; nenhuma lacuna estrutural depende disto.
+- **Status:** **GATE DISPARADO** (2026-07-16) - 2 de 2 evidencias com a MESMA
+  mecanica (breakout + mario). PRONTA PARA COMECAR quando o dono decidir; o
+  desenho da porta se confirma nos dois consumidores. Ver "O gate disparou".
+- **Prioridade:** baixa/media - conforto, mas agora com duplicacao real doendo
+  (duas copias quase identicas de ~290 linhas).
 - **Categoria:** Arquitetura / porta da cengine (vocabulario), backend fica na
   plataforma.
 - **Depende de:** nada estrutural. Depende de EVIDENCIA (2o jogo com som).
@@ -52,6 +54,33 @@ mao, a forma da porta se decide sozinha.
 (backend XAudio2, ilha Win32 pura) + `brk::Events` (o dominio RELATA fatos; a
 cena decide o timbre). A parte PROMOVIVEL ja esta meio isolada: os `Events` sao
 o vocabulario "o que aconteceu", e o `play` e a traducao para som.
+
+## O gate disparou (2026-07-16) - o mario e a 2a evidencia, com copia quase identica
+
+**Evidencia 2/2 registrada:** mario-bros @ `0fab493`,
+`src/platform/theforge/src/MarioForge/audio/AudioPlayer.{h,cpp}` (task 05d do
+mario, validada jogando). A copia do breakout foi **deliberadamente quase
+literal** para medir ESTE gate: mudaram so o enum `Sound` (vocabulario do jogo:
+Jump/Coin/Stomp/Hurt/Flag/GameOver vs PaddleHit/WallBounce/BrickBreak/
+LifeLost/LevelUp) e as receitas das ondas (apresentacao). A MECANICA e identica
+nos dois consumidores:
+
+- `bool init()` sintetiza os sons e abre o device; falhar = jogo mudo (no-op);
+- `void play(Sound)` — enum do jogo, disparo imediato, sem volume/prioridade;
+- pool de vozes round-robin, PCM 16-bit mono, buffer apontando para os samples;
+- a cena traduz os `Events` do dominio em `play()` (contados tocam por unidade);
+- o player vive no casco (composition root) e atravessa as trocas de cena.
+
+E o discriminador do input (4 copias do MESMO enum `Key`): duas copias da mesma
+mecanica = mecanismo, nao politica. A forma da porta que os DOIS consumidores
+confirmam e a minima: **`play(id)` e mais nada** — nenhum dos dois precisou de
+volume, prioridade ou stop. O que continua sendo do jogo: o enum de sons, as
+receitas de sintese e o mapeamento evento->som.
+
+**Proximo passo (decisao do dono):** implementar a porta `cengine::audio`
+(0.9.0?) com os criterios de aceite abaixo; os dois jogos viram consumidores
+reais nos testes (regra de proveniencia). Ate la, as duas copias seguem como
+estao — congeladas em evidencia.
 
 ## Objetivo (SE o gate disparar)
 
