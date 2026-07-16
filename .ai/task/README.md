@@ -153,10 +153,28 @@ estruturalmente parecidas mas **semanticamente diferentes**. Semelhança de form
   escopo declarado na task 17. Formato do mundo é política; sem 2º consumidor (o
   mario não dá a volta). Promover daria à engine uma opinião sobre o formato do
   mundo.
+- **Física de plataforma** (gravidade/terminal, impulso de pulo, integração,
+  resolução sobre grade de tiles — o `World` do mario) — avaliada ao FECHAR o
+  mario (2026-07-16), a pedido do dono. Vetada em três camadas: as CONSTANTES
+  são feel (kJumpSpeed=340 existe para o pulo dar ~4 tiles "a cara do
+  original", e foi retunada em playtest); a INTEGRAÇÃO é trivial e cada jogo
+  integra diferente (inércia do asteroids, reflexão do breakout, degraus do
+  spaceinvaders, eixo-separado do mario); a RESOLUÇÃO já é a task 22, e a
+  evidência aponta contra (breakout e mario resolvem DIFERENTE). Não há duas
+  cópias idênticas de nada — o discriminador do input não dispara. O único
+  recorte mecanismo é a penetração/MTV, que É a task 22; "física na engine"
+  congelaria até o formato de mundo (rampas tipo Sonic estouram o AABB).
+  Reabre se um jogo futuro copiar o `World` do mario quase literalmente.
 
 Sweep de 2026-07-15 (ao fechar o degrau 2 do mario): nenhuma candidata nova além
 das estacionadas acima; nenhum math/Vec2/RNG/timer próprio duplicado (os jogos
 usam `collision2d::Vec2`).
+
+Sweep de 2026-07-16 (ao fechar o mario completo — degraus 1-5, com goombas,
+recordes por pontos/tempo e bandeira): nenhuma candidata nova; física de
+plataforma avaliada e vetada (acima); tasks 22/23/24 seguem estacionadas com os
+gates inalterados (o pisão no goomba REFORÇA a leitura da 22: mais um contato
+resolvido com regra própria do jogo).
 
 ## Legenda de status
 

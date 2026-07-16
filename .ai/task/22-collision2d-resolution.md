@@ -54,6 +54,21 @@ o contato do seu jeito, o calculo fica no jogo.
 como evidencia desta task — ele resolve reflexao, nao penetracao posicional, e
 ja o faz no jogo (`reflectOff`).
 
+## Reavaliacao ao fechar o mario (2026-07-16) - gate MANTIDO
+
+O mario terminou completo (degraus 1-5: goombas, moedas, vidas, bandeira,
+recordes por pontos/tempo) e o dono perguntou se valia uma task para "mover a
+fisica para a cengine". Veredito: **nao** — a fisica de plataforma e feel
+(constantes tunadas em playtest) + politica (estrategias de resolucao), e o
+unico recorte de mecanismo dela e ESTA task; registro no bloco "Consideradas e
+vetadas" do README do backlog.
+
+O jogo completo ate ADICIONOU evidencia contra promover a resolucao: o **pisao
+no goomba** (degrau 5a) e mais um contato "de cima" resolvido com regra propria
+do jogo (matar + pulinho + so na metade superior do corpo), irmao da one-way e
+diferente de ambos os anteriores. Tres formas de "resolver" em dois jogos, todas
+politica. O gate segue: 2o consumidor consumindo penetracao/MTV do MESMO jeito.
+
 ## Contexto
 
 `cengine::collision2d` e um modulo de **deteccao**: `intersects(forma, forma) ->
