@@ -56,6 +56,7 @@ gated by CMake options:
 | `CENGINE_BUILD_ROUTING` | `ON` | Build `cengine::routing` (scene/state routing) |
 | `CENGINE_BUILD_COLLISION2D` | `ON` | Build `cengine::collision2d` (2D collision **detection**) |
 | `CENGINE_BUILD_INPUT` | `ON` | Build `cengine::input` (keyboard **vocabulary**) |
+| `CENGINE_BUILD_AUDIO` | `ON` | Build `cengine::audio` (the `play(id)` **port**; backends live in platforms) |
 | `CENGINE_BUILD_TESTS` | `ON` | Build the test suite |
 
 A consumer links only what it needs:
@@ -66,6 +67,7 @@ target_link_libraries(my_game PRIVATE
     cengine::routing      # optional
     cengine::collision2d  # optional
     cengine::input        # optional
+    cengine::audio        # optional
 )
 ```
 
@@ -94,6 +96,30 @@ menus and types text — and its one-event-per-`input()` cap is *semantics*: it 
 what stops a repeated key from walking through three menu items in a single
 frame. The **held state** moves things: a ship does not travel on edges, it
 travels while the arrow is down, every frame.
+
+### `cengine::audio` — the port, never the speaker
+
+`Player` is the contract the *scenes* speak: *play this sound from the game's
+catalog*. The backend (synthesis, voice pools, XAudio2, a device) lives in the
+platform and implements the port — the exact same cut as input, in the opposite
+direction (there the platform pushes and the scene reads; here the scene asks
+and the platform delivers):
+
+```cpp
+#include <cengine/audio/Player.hpp>
+
+enum class Sound : uint8_t { Jump, Coin, Stomp };  // the GAME's catalog
+
+// scene (holds a cengine::audio::Player& injected by the composition root):
+audio.play(Sound::Coin);   // enum sugar — what crosses the port is the id
+```
+
+Mute is normal degradation, not an error: without a sound device, `play()` is a
+safe no-op. The engine never knows what a sound *means* or how it is made — the
+catalog, the event→sound mapping and the synthesis recipes are all the game's
+and the platform's business. The port is deliberately minimal (`play(id)` and
+nothing else): its two real consumers (breakout and mario-bros) confirmed
+neither volume, priority nor stop was ever needed.
 
 ### `cengine::collision2d` — detection, not physics
 

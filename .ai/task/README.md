@@ -108,7 +108,7 @@ Ler antes de executar as tarefas de arquitetura:
 | 21 | [`IWindowManager` obrigatório: remover a hipótese do `nullptr`](21-window-manager-mandatory.md) ✅ 0.6.0 | 🟡 Média (breaking, 0.6.0) | Arquitetura |
 | 22 | [Colisão 2D: resolução (penetração/MTV)](22-collision2d-resolution.md) | 🟢 Baixa/Média (estacionada — gate avaliado pelo mario-bros: 1 de 2 evidências, e sinal de que resolver é política) | Arquitetura |
 | 23 | [Câmera / viewport (mundo→tela + culling)](23-camera-viewport.md) | 🟢 Baixa (estacionada — 1 de 2 evidências: mario degrau 4; só a transformada+culling é candidata, o seguimento é feel) | Arquitetura |
-| 24 | [Áudio como porta (`play(id)`), backend na plataforma](24-audio-port.md) | 🟡 Baixa/Média (**GATE DISPARADO** 2026-07-16 — 2 de 2: breakout + mario@0fab493, cópias quase idênticas; pronta para começar quando o dono decidir) | Arquitetura |
+| 24 | [Áudio como porta (`play(id)`), backend na plataforma](24-audio-port.md) ✅ 0.9.0 | 🟡 Média (gate disparou com 2/2: breakout + mario@0fab493; mario valida a 0.9.0) | Arquitetura |
 
 ## Candidatas estacionadas (esperando evidência)
 
@@ -125,11 +125,11 @@ que precisa disparar antes de começar. Ver [ADR 0002](../decisions/0002-criteri
   câmera. Só a TRANSFORMADA mundo→janela + culling é candidata; o SEGUIMENTO
   (âncora/limites) é feel e fica no jogo. Espera um 2º consumidor com o mesmo
   modelo de projeção.
-- **24 (áudio como porta)** — **2/2, GATE DISPARADO (2026-07-16)**: breakout +
-  mario (`0fab493`, task 05d) — cópias quase idênticas do `AudioPlayer` (só o
-  enum de sons e as receitas mudam), o discriminador do input. A forma
-  confirmada pelos dois é a mínima: `play(id)` e mais nada. Sobe como PORTA
-  (ao lado do input), BACKEND fica na plataforma; começar é decisão do dono.
+- **24 (áudio como porta)** — **PROMOVIDA (0.9.0, 2026-07-16)**: o gate
+  disparou com 2/2 (breakout + mario `0fab493`, cópias quase idênticas — o
+  discriminador do input) e a porta subiu: `cengine::audio::Player` com
+  `play(id)` e mais nada, backend segue nas plataformas. É a prova de que uma
+  estacionada não é uma recusa: é uma espera com critério.
 
 ## Consideradas e vetadas (política de jogo — NÃO reabrir sem argumento novo)
 

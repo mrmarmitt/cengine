@@ -1,10 +1,11 @@
 # 24 - Audio como porta (`play(id)`), backend na plataforma
 
-- **Status:** **GATE DISPARADO** (2026-07-16) - 2 de 2 evidencias com a MESMA
-  mecanica (breakout + mario). PRONTA PARA COMECAR quando o dono decidir; o
-  desenho da porta se confirma nos dois consumidores. Ver "O gate disparou".
-- **Prioridade:** baixa/media - conforto, mas agora com duplicacao real doendo
-  (duas copias quase identicas de ~290 linhas).
+- **Status:** done (0.9.0, 2026-07-16) - implementada apos o gate disparar com
+  2/2 evidencias (breakout + mario, copias quase identicas). Modulo
+  `cengine::audio` header-only (INTERFACE), suite 91/91 com os dois
+  consumidores reais transcritos (proveniencia); o mario e o consumidor de
+  validacao da 0.9.0.
+- **Prioridade:** concluida.
 - **Categoria:** Arquitetura / porta da cengine (vocabulario), backend fica na
   plataforma.
 - **Depende de:** nada estrutural. Depende de EVIDENCIA (2o jogo com som).
@@ -120,15 +121,32 @@ Nao implementar imediatamente. Comecar apenas quando:
 
 ## Criterios de Aceite (quando/se subir)
 
-- [ ] Porta `cengine::audio` opt-in, so vocabulario, sem backend nem
-      dependencia de plataforma.
-- [ ] Backend (XAudio2) permanece na plataforma; a engine nao inclui header de
-      som nenhum.
-- [ ] **Regra de proveniencia:** testes de consumidor citam a origem
-      (repo @ commit, arquivo, linha) e transcrevem os valores do jogo.
-- [ ] "Mudo" e degradacao normal: sem device, `play()` vira no-op (como no
-      breakout), nao erro fatal.
-- [ ] O dominio continua sem saber o que e um alto-falante (`Events` sao fatos).
+- [x] Porta `cengine::audio` opt-in, so vocabulario, sem backend nem
+      dependencia de plataforma. (`modules/audio`, INTERFACE library,
+      `CENGINE_BUILD_AUDIO`; um header: `Player.hpp` — `SoundId` + `Player`
+      com `play(id)` virtual e acucar de enum.)
+- [x] Backend (XAudio2) permanece na plataforma; a engine nao inclui header de
+      som nenhum. (O AudioPlayer de cada jogo passa a IMPLEMENTAR a porta;
+      sintese/pool/COM continuam la.)
+- [x] **Regra de proveniencia:** testes de consumidor citam a origem
+      (breakout @ 31dc850, mario @ 0fab493; arquivo+linhas) e transcrevem os
+      valores dos jogos (os dois catalogos de sons, os eventos contados, o
+      else-if gameOver/playerHit do mario).
+- [x] "Mudo" e degradacao normal: sem device, `play()` vira no-op — contrato
+      documentado no header e encarnado no teste `MuteIsNormalDegradation...`.
+- [x] O dominio continua sem saber o que e um alto-falante (`Events` sao
+      fatos; nenhum jogo mudou o dominio para consumir a porta).
+
+## Decisoes de implementacao (2026-07-16)
+
+- **`SoundId` e um numero (uint32_t), nao um enum da engine** — ao contrario
+  do `Key` do input, os vocabularios de som DIFEREM entre jogos (Jump/Coin vs
+  PaddleHit/Brick...); a engine carrega o pedido, nao o significado. O acucar
+  `play(EnumDoJogo)` (template restrito a enums) mantem as cenas identicas ao
+  que ja eram (`m_audio.play(Sound::Jump)`).
+- **Interface de despacho imediato, nao fila** — os dois consumidores tocam na
+  hora; uma fila exigiria uma bomba (pump) no loop que nenhum consumidor pediu.
+- **Header-only (INTERFACE library)** — o contrato nao tem estado nem .cpp.
 
 ## Riscos
 
