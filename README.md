@@ -57,6 +57,8 @@ gated by CMake options:
 | `CENGINE_BUILD_COLLISION2D` | `ON` | Build `cengine::collision2d` (2D collision **detection**) |
 | `CENGINE_BUILD_INPUT` | `ON` | Build `cengine::input` (keyboard **vocabulary**) |
 | `CENGINE_BUILD_AUDIO` | `ON` | Build `cengine::audio` (the `play(id)` **port**; backends live in platforms) |
+| `CENGINE_BUILD_CAMERA2D` | `ON` | Build `cengine::camera2d` (world→view **transform** + culling; following stays in the game) |
+| `CENGINE_BUILD_ANIM` | `ON` | Build `cengine::anim` (the time-driven **clip machine**; clip selection stays in the game) |
 | `CENGINE_BUILD_TESTS` | `ON` | Build the test suite |
 
 A consumer links only what it needs:
@@ -68,6 +70,8 @@ target_link_libraries(my_game PRIVATE
     cengine::collision2d  # optional
     cengine::input        # optional
     cengine::audio        # optional
+    cengine::camera2d     # optional
+    cengine::anim         # optional
 )
 ```
 
@@ -151,6 +155,61 @@ That line — mechanism in the engine, policy in the game — is
 [ADR 0002](.ai/decisions/0002-criterio-de-promocao-anti-deposito.md); the module's
 test suite carries the two real cases that justified it (Space Invaders' AABB
 and Asteroids' circle).
+
+### `cengine::camera2d` — the transform, never the follow
+
+A camera is two halves, and only one of them is the same in every game. The
+**transform** (world → view) and the **culling** (is this rectangle worth
+drawing?) were identical, line for line, in mario-bros and in the zelda-like —
+that half is here:
+
+```cpp
+#include <cengine/camera2d/Viewport.hpp>
+
+using namespace cengine::camera2d;
+
+const Viewport vp{ .origin = { camX, camY }, .size = { 320.0f, 180.0f },
+                   .cullMargin = 16.0f };
+
+if (visible(vp, tileRect))                    // culling, with a margin so
+{                                             // sprites don't pop at the edge
+    const Vec2 v = worldToView(vp, { x, y }); // the subtraction
+    // the SCENE then scales and letterboxes — that is its business, not the
+    // engine's: it is the one that knows the window.
+}
+```
+
+The other half — **following** (where the origin should be: anchor on the hero,
+clamp to the level) — is *feel*, and it diverged in exactly the way that proves
+it should not rise: mario scrolls on one axis, the zelda-like on two. It stays
+in the games.
+
+### `cengine::anim` — the machine, never the selection
+
+Time-driven sprite clips: a table of clips, a current frame, an accumulator.
+Switching clips resets frame *and* time; only multi-frame cycles advance:
+
+```cpp
+#include <cengine/anim/Animator.hpp>
+
+enum class Clip : std::uint32_t { Idle, Walk, Attack };  // the GAME's vocabulary
+
+cengine::anim::Animator animator{ {
+    { .frameCount = 1 },                              // Idle — a pose
+    { .frameCount = 2, .frameTime = 0.12 },           // Walk — a cycle
+    { .frameCount = 1 },                              // Attack — a pose
+} };
+
+// in the scene's update, from facts the domain already owns:
+animator.update(dt, attacking ? Clip::Attack : (moving ? Clip::Walk : Clip::Idle));
+drawSprite(regionFor(animator.clipAs<Clip>(), animator.frame(), world.facing()));
+```
+
+What stays in the game: **which clip** to play (the selection above), the facing,
+and the atlas region table. The engine never knows what `Walk` means or where the
+pixels are. A game that animates by domain rule instead of by clock (Space
+Invaders steps its aliens on the march tick) simply does not link the module —
+that counter-example is why it is opt-in.
 
 ## Usage
 

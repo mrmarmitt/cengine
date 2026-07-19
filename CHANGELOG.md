@@ -5,6 +5,76 @@ All notable changes to CEngine are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-07-19
+
+Two promotions in one release, both **opt-in**, both with the ADR 0002 gate
+closed by mario-bros and the zelda-like: the camera's **transform** (task 23) and
+the animation **clip machine** (task 25).
+
+> **Not a breaking release.** `cengine::camera2d` and `cengine::anim` are new
+> modules; nothing existing changed.
+
+### Added
+
+- **`cengine::camera2d`** (`CENGINE_BUILD_CAMERA2D`, default `ON`):
+  - `Viewport { origin, size, cullMargin }`, `worldToView` (the subtraction) and
+    `visible` (culling against the view inflated by the margin).
+  - Only the half that was **identical, line for line**, in both games rises.
+    **Following** — anchor on the focus, clamp to the level — is *feel*, and it
+    diverged in the way that proves the cut: mario scrolls on one axis, the
+    zelda-like on two. Scaling and letterboxing stay in the scenes, which are the
+    ones that know the window.
+- **`cengine::anim`** (`CENGINE_BUILD_ANIM`, default `ON`):
+  - `Animator` over a table of `ClipDesc { frameCount, frameTime }`: switching
+    clips resets frame *and* time, only multi-frame cycles advance, and an id
+    outside the table is a no-op (the same forgiving contract as `play(id)`).
+  - Clip **selection**, facing and the atlas region table stay in the games —
+    the engine never learns what `Walk` means. Space Invaders, which animates by
+    domain rule (the march tick) rather than by clock, is the counter-example
+    that made the module opt-in rather than part of `core`.
+
+### Why now (the gate)
+
+Both candidates had been parked with their evidence recorded but deliberately
+**not** promoted (mario-bros closed 1/2 for each; the zelda-like closed 2/2 and
+still only registered it). The extraction is its own step: the mechanism was
+compared side by side first — down to the animation's 0.12s / 2-frame cadence —
+and only then lifted, validated by re-pointing **one** consumer.
+
+Per ADR 0003's Amendment 1, the frozen game does not migrate: mario-bros stays
+pinned at 0.9.0 and pays the toll by having its cases embodied in the suite. The
+tests cite their origins: mario-bros @ `4a8f825` (camera) and @ `8dfbb90`
+(`PlayerAnimator`), zelda @ `9658ae0` (camera) and @ `3a3abda` (`HeroAnimator`),
+with the games' own values transcribed — 16-unit cull margin, 320×180 view,
+0.12s two-frame walk.
+
+## [0.9.0] - 2026-07-17
+
+The audio **port** becomes an opt-in module (task 24). The speaker never will.
+
+> **Not a breaking release.** `cengine::audio` is a new header-only module and
+> changes nothing else.
+
+### Added
+
+- **`cengine::audio`** (`CENGINE_BUILD_AUDIO`, default `ON`):
+  - `Player` — one contract, `play(id)` and nothing else: the minimal shape both
+    real consumers confirmed (neither ever needed volume, priority or stop).
+  - `SoundId` is a plain number: sound catalogs differ per game, so the engine
+    carries the *request*, never the meaning. Enum sugar keeps
+    `audio.play(Sound::Jump)` in the scenes.
+  - Immediate dispatch (no consumer asked for a queue or a pump); **mute is
+    normal degradation of the contract, not an error**.
+  - Synthesis, voice pools and XAudio2 stay in the platform — the same cut as
+    the input port (task 20), in the opposite direction: there the platform
+    pushes and the scene reads; here the scene asks and the platform delivers.
+
+### Why now (the gate)
+
+The gate fired at 2/2 with the *same* mechanic: breakout's `AudioPlayer`
+(@ `31dc850`) and its deliberate copy in mario-bros (@ `0fab493`), both
+transcribed and cited in the suite under the provenance rule.
+
 ## [0.8.0] - 2026-07-14
 
 The keyboard **contract** becomes an opt-in module (task 20). The **capture**
@@ -456,6 +526,11 @@ routing as an **opt-in module**.
 - Initial single-target (`cengine_lib`) engine: game loop, scene/state
   management, and in-memory router.
 
+[0.10.0]: https://github.com/cengine-dev/cengine/compare/0.9.0...0.10.0
+[0.9.0]: https://github.com/cengine-dev/cengine/compare/0.8.0...0.9.0
+[0.8.0]: https://github.com/cengine-dev/cengine/compare/0.7.1...0.8.0
+[0.7.1]: https://github.com/cengine-dev/cengine/compare/0.7.0...0.7.1
+[0.7.0]: https://github.com/cengine-dev/cengine/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/cengine-dev/cengine/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/cengine-dev/cengine/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/cengine-dev/cengine/compare/0.3.0...0.4.0
