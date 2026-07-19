@@ -79,6 +79,28 @@ if(CENGINE_BUILD_AUDIO)
 endif()
 
 # -------------------------------------------------------------
+# 3e. Testes do módulo camera2d — só quando o módulo está habilitado
+# -------------------------------------------------------------
+if(CENGINE_BUILD_CAMERA2D)
+  target_sources(cengine_tests
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/camera2d/ViewportTest.cpp"
+  )
+  target_link_libraries(cengine_tests PRIVATE cengine::camera2d)
+endif()
+
+# -------------------------------------------------------------
+# 3f. Testes do módulo anim — só quando o módulo está habilitado
+# -------------------------------------------------------------
+if(CENGINE_BUILD_ANIM)
+  target_sources(cengine_tests
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/anim/AnimatorTest.cpp"
+  )
+  target_link_libraries(cengine_tests PRIVATE cengine::anim)
+endif()
+
+# -------------------------------------------------------------
 # 4. Includes e propriedades
 # -------------------------------------------------------------
 # Permite incluir os mocks como <mock/MockXxx.hpp>

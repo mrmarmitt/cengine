@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.23)
 
-project(cengine VERSION 0.9.0 LANGUAGES CXX)
+project(cengine VERSION 0.10.0 LANGUAGES CXX)
 
 # Define padrÃ£o do projeto
 set(CMAKE_CXX_STANDARD 23)
@@ -17,6 +17,8 @@ option(CENGINE_BUILD_ROUTING     "Build the optional routing module (cengine::ro
 option(CENGINE_BUILD_COLLISION2D "Build the optional 2D collision detection module (cengine::collision2d)" ON)
 option(CENGINE_BUILD_INPUT       "Build the optional input vocabulary module (cengine::input)" ON)
 option(CENGINE_BUILD_AUDIO       "Build the optional audio port module (cengine::audio)" ON)
+option(CENGINE_BUILD_CAMERA2D    "Build the optional 2D camera mechanism module (cengine::camera2d)" ON)
+option(CENGINE_BUILD_ANIM       "Build the optional animation clip module (cengine::anim)" ON)
 option(CENGINE_BUILD_TESTS       "Build the test suite" ON)
 
 # -------------------------------------------------------------
@@ -38,6 +40,14 @@ endif()
 
 if(CENGINE_BUILD_AUDIO)
     add_subdirectory(modules/audio)
+endif()
+
+if(CENGINE_BUILD_CAMERA2D)
+    add_subdirectory(modules/camera2d)
+endif()
+
+if(CENGINE_BUILD_ANIM)
+    add_subdirectory(modules/anim)
 endif()
 
 if(CENGINE_BUILD_TESTS)

@@ -1,12 +1,14 @@
 # 23 - Camera / viewport (projecao mundo -> tela + culling)
 
-- **Status:** gate disparado - **2 de 2 evidencias** (mario-bros + zelda,
-  2026-07-18). Os dois usam o mesmo mecanismo de transformada mundo->janela e
-  culling; o seguimento continua sendo feel de cada jogo. Pronta para desenho
-  da extracao, ainda nao implementada. Ver "Reavaliacao com o Zelda".
-- **Prioridade:** baixa/media - o criterio de evidencia foi satisfeito; o
-  proximo passo e comparar as duas copias e desenhar a menor API pura que as
-  substitua sem promover o seguimento.
+- **Status:** done (0.10.0, 2026-07-18) — modulo `cengine::camera2d` extraido
+  com o corte previsto: `Viewport {origin, size, cullMargin}` + `worldToView`
+  (subtracao) + `visible` (culling contra a janela inflada). A comparacao das
+  copias confirmou: o `visible()` do mario e do zelda era IDENTICO linha a
+  linha (so o namespace mudava); a formula subiu como estava. O zelda e o
+  consumidor de validacao (Camera dele delega visible/projecao ao modulo; o
+  `follow` de 2 eixos FICA no jogo); o mario permanece pinado na 0.9.0 (jogo
+  congelado nao migra — a evidencia dele esta transcrita nos testes).
+- **Prioridade:** concluida.
 - **Categoria:** Arquitetura / possivel modulo novo opt-in (ou fica no jogo).
 - **Depende de:** nada estrutural. Depende de EVIDENCIA (consumidores reais).
 - **Breaking:** nao. Nasceria como modulo opt-in (ex.: `cengine::camera2d`) ou
@@ -126,13 +128,16 @@ Os criterios de evidencia estao satisfeitos:
 
 ## Criterios de Aceite (quando/se subir)
 
-- [ ] Transformada mundo -> viewport pura (e culling), opt-in, testavel sem GPU.
-- [ ] **Regra de proveniencia:** testes de consumidor real citam a origem
-      (repo @ commit, arquivo, linha) e transcrevem os valores do jogo.
-- [ ] A engine NAO decide para onde a camera olha: nenhum seguimento/deadzone
-      embutido.
-- [ ] O modelo de tela unica (enquadramento fixo) continua trivial para jogos
-      que nao rolam.
+- [x] Transformada mundo -> viewport pura (e culling), opt-in, testavel sem GPU
+      (`modules/camera2d`, 6 testes).
+- [x] **Regra de proveniencia:** testes de consumidor real citam a origem
+      (mario-bros @ 4a8f825 Camera.cpp:27-32; zelda @ 9658ae0 Camera.cpp:31-36)
+      e transcrevem os valores dos jogos (margem 16; view 320x180 do zelda,
+      masmorra 640x384; rolagem horizontal do mario).
+- [x] A engine NAO decide para onde a camera olha: nenhum seguimento/deadzone
+      embutido — os `follow()` (1 eixo no mario, 2 no zelda) ficaram nos jogos.
+- [x] O modelo de tela unica (enquadramento fixo) continua trivial para jogos
+      que nao rolam (origem zero = identidade; e o modulo e opt-in).
 
 ## Riscos
 

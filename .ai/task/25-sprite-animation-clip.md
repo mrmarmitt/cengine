@@ -1,9 +1,14 @@
 # 25 - Clip de animacao de sprite (frames sobre tempo)
 
-- **Status:** estacionada (NAO implementar — gate ADR 0002 nao disparou:
-  1 de 2 evidencias, e ha sinal de divergencia)
-- **Prioridade:** baixa
-- **Categoria:** Arquitetura (modulo opt-in, candidato `cengine::anim`?)
+- **Status:** done (0.10.0, 2026-07-18) — modulo `cengine::anim` extraido com o
+  corte previsto: `Animator(tabela de ClipDesc {frameCount, frameTime})` +
+  `update(dt, clip desejado)` — troca zera, so ciclos multiframe avancam,
+  id fora da tabela e no-op (o contrato do play(id) do audio). O zelda e o
+  consumidor de validacao (HeroAnimator vira casca de selecao sobre o modulo);
+  o mario permanece pinado na 0.9.0 (evidencia transcrita nos testes). A
+  contra-evidencia do spaceinvaders segue respeitada: quem anima por regra de
+  dominio nao linka o modulo (opt-in, ADR 0001).
+- **Categoria:** Arquitetura (modulo opt-in `cengine::anim`)
 - **Registrada em:** 2026-07-17 (revisao pos-0.9.0, antes do 6o jogo)
 
 ## A candidata
@@ -13,11 +18,17 @@ um cursor que avanca com `dt` e devolve o frame atual. Trocar de clip reseta o
 cursor. E o nucleo do `PlayerAnimator` do mario-bros — a parte que NAO conhece
 Idle/Walk/Jump.
 
-## Evidencias (1/2)
+## Evidencias (2/2 — gate disparado em 2026-07-18)
 
-- **mario-bros** (`src/mario/anim/PlayerAnimator.*`, task 03 do jogo): ciclo de
-  frames sobre tempo, 1-frame para Idle/Jump, ciclo de 2 para Walk, troca de
-  clip reseta para o frame zero. C++ puro, testado sem GPU (8 testes).
+- **mario-bros @ 8dfbb90** (`src/mario/anim/PlayerAnimator.*`, task 03 do
+  jogo): ciclo de frames sobre tempo, 1-frame para Idle/Jump, ciclo de 2 para
+  Walk a 0.12s, troca de clip reseta para o frame zero. C++ puro, testado sem
+  GPU (8 testes).
+- **zelda @ 3a3abda** (`src/zelda/anim/HeroAnimator.*`, task 05 do jogo): a
+  MESMA maquina, ate na cadencia (2 frames a 0.12s) — clips Idle/Walk/Attack.
+  O que diverge e SELECAO e vocabulario (Attack por acao em vez de Jump por
+  estado fisico; facing fora do animator, e fato de dominio la) — exatamente
+  o que o corte manda deixar no jogo.
 
 ## Contra-evidencia (o sinal de divergencia, como na task 22)
 

@@ -107,9 +107,9 @@ Ler antes de executar as tarefas de arquitetura:
 | 20 | [Vocabulário de input como porta](20-input-vocabulary-port.md) ✅ 0.8.0 | 🟡 Média | Arquitetura |
 | 21 | [`IWindowManager` obrigatório: remover a hipótese do `nullptr`](21-window-manager-mandatory.md) ✅ 0.6.0 | 🟡 Média (breaking, 0.6.0) | Arquitetura |
 | 22 | [Colisão 2D: resolução (recorte a decidir)](22-collision2d-resolution.md) | 🟢 Baixa/Média (2/2 para eixo-separado: mario + zelda; 0 consumidores de penetração/MTV — comparar antes de promover) | Arquitetura |
-| 23 | [Câmera / viewport (mundo→tela + culling)](23-camera-viewport.md) | 🟡 Baixa/Média (gate disparado 2/2: mario + zelda; extrair só transformada+culling, seguimento fica nos jogos) | Arquitetura |
+| 23 | [Câmera / viewport (mundo→tela + culling)](23-camera-viewport.md) | ✅ done (0.10.0 — `cengine::camera2d`: transformada+culling; seguimento ficou nos jogos; zelda valida, mario pinado 0.9.0) | Arquitetura |
 | 24 | [Áudio como porta (`play(id)`), backend na plataforma](24-audio-port.md) ✅ 0.9.0 | 🟡 Média (gate disparou com 2/2: breakout + mario@0fab493; mario valida a 0.9.0) | Arquitetura |
-| 25 | [Clip de animação de sprite (frames sobre tempo)](25-sprite-animation-clip.md) | 🟢 Baixa (estacionada — 1 de 2 evidências: mario `PlayerAnimator`; o spaceinvaders anima SEM relógio, sinal de divergência) | Arquitetura |
+| 25 | [Clip de animação de sprite (frames sobre tempo)](25-sprite-animation-clip.md) | ✅ done (0.10.0 — `cengine::anim`: máquina clip+frame+acumulador; seleção/vocabulário ficam nos jogos; zelda valida, mario pinado 0.9.0; spaceinvaders segue sem linkar — opt-in) | Arquitetura |
 
 ## Candidatas e estado dos gates
 
